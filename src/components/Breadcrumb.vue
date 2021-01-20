@@ -15,17 +15,17 @@
 </template>
 
 <script>
-import { navigateToIfNeeded } from '../util/VueRouterHelper';
+import { navigateToIfNeeded, buildCurrentRouteStack } from '../util/VueRouterHelper';
 
 export default {
   name: 'Breadcrumb',
   data() {
     return {
-      currentLocationNodeList: [
-        { name: 'Second' },
-        { name: 'Third' },
-      ],
+      currentLocationNodeList: [],
     };
+  },
+  mounted(){
+    this.rebuildCurrentRouteNodeList();
   },
   methods: {
     navigateToHome: function(){
@@ -34,8 +34,20 @@ export default {
     navigateTo: function(targetPath){
       navigateToIfNeeded(this.$router, targetPath);
     },
+    rebuildCurrentRouteNodeList(){
+      let lastMatchedRoute = this.$router.currentRoute.matched[this.$router.currentRoute.matched.length-1];
+      let stackOfCurrentRoute = [];
+      buildCurrentRouteStack(lastMatchedRoute, this.$router.currentRoute.params, stackOfCurrentRoute);
+      stackOfCurrentRoute = stackOfCurrentRoute.reverse();
+      this.currentLocationNodeList = stackOfCurrentRoute;
+    },
   },
   components: {
+  },
+  watch: {
+    $route(to, from){
+      this.rebuildCurrentRouteNodeList();
+    },
   },
 };
 
