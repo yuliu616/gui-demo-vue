@@ -47,10 +47,7 @@ export default {
   },
   computed: {
     loggedIn: self=>true,
-    menuRoot: self=>[
-      { code: 'Menu1', title: 'Menu1', targetPath: '/menu1' },
-      { code: 'message', title: 'Messages', targetPath: '/message' },
-    ],
+    menuRoot: self=>self.$store.state.menuStore.menuRoot,
   },
   methods: {
     navigateToHome: function(){
