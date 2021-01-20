@@ -57,7 +57,11 @@ export default {
       navigateToIfNeeded(this.$router, targetPath);
     },
     badgeOfMenu: function(code){
-      return 0;
+      if (code == 'message') {
+        return this.$store.getters['messageStore/messageCount'];
+      } else {
+        return 0;
+      }
     },
   },
   components: {
