@@ -71,7 +71,7 @@ export default {
     };
   },
   computed: {
-    loggedIn: self=>true,
+    loggedIn: self=>false,
   },
   components: {
     Breadcrumb,
