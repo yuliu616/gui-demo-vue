@@ -5,6 +5,7 @@ import router from './router/router-index.vue';
 import { rootStore } from './stores/index';
 
 import 'semantic-ui-css/semantic.min.css';
+import 'toastr/build/toastr.min.css';
 
 Vue.config.productionTip = false;
 
