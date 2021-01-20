@@ -23,10 +23,9 @@ export default {
     };
   },
   computed: {
-    messageList: ()=>[
-      { id: 10, viewName: 'dummy', text: 'hello' },
-      { id: 11, viewName: 'dummy', text: 'hello' },
-    ],
+    // last 4 items in messageList
+    messageList: self=>self.$store.state.messageStore.messageList
+      .slice().reverse().slice(0, 4).reverse(),
   },
   methods: {
   },
