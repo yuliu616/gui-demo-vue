@@ -71,7 +71,7 @@ export default {
     };
   },
   computed: {
-    loggedIn: self=>false,
+    loggedIn: self=>self.$store.state.authStore.loggedIn,
   },
   components: {
     Breadcrumb,

@@ -46,7 +46,7 @@ export default {
     };
   },
   computed: {
-    loggedIn: self=>false,
+    loggedIn: self=>self.$store.state.authStore.loggedIn,
     menuRoot: self=>self.$store.state.menuStore.menuRoot,
   },
   methods: {

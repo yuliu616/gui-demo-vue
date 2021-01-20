@@ -48,7 +48,7 @@ export default {
     };
   },
   computed: {
-    loggedIn: self=>false,
+    loggedIn: self=>self.$store.state.authStore.loggedIn,
   },
   mounted: function(){
     let hourOfDay = new Date().getHours();
@@ -59,6 +59,27 @@ export default {
   methods: {
     sendMessage,
     async submittingLoginForm(){
+      try {
+        await this.$store.dispatch('authStore/doLogin', {
+          username: this.username,
+          password: this.password,
+        });
+        this.sendMessage({
+          viewName: view_name_text['word.login'],
+          type: MessageType.INFO,
+          text: message_text['sentence.login.passed'],
+        });
+      } catch(err){
+        await this.sendMessage({
+          viewName: view_name_text['word.login'],
+          type: MessageType.ERROR,
+          text: message_text['sentence.login.failed'],
+        });
+        return;
+      }
+      // clear fields after login successfully
+      this.username = '';
+      this.password = '';
     },
   },
   components: {
