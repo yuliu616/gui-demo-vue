@@ -5,6 +5,7 @@ import axios from "axios";
 import { authStore } from './authStore';
 import { menuStore } from './menuStore';
 import { messageStore } from './messageStore';
+import { fixSemanticUiDropdown } from '../util/SemanticFix';
 
 Vue.use(Vuex);
 
@@ -25,6 +26,11 @@ axios.interceptors.request.use(function(req){
     req.headers['authorization']=`Bearer: ${access_token}`;  
   }
   return req;
+});
+axios.interceptors.response.use(function(res){
+  // initialize code for Semantic UI javascript
+  fixSemanticUiDropdown();
+  return res;
 });
 
 // bootstrap

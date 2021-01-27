@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import jQuery from 'jquery';
 import App from './App.vue';
 import Sidebar from './Sidebar.vue';
 import Login from './Login.vue';
@@ -6,7 +7,12 @@ import router from './router/router-index.vue';
 import { rootStore } from './stores/index';
 
 import 'semantic-ui-css/semantic.min.css';
+import 'semantic-ui-css/semantic.js';
 import 'toastr/build/toastr.min.css';
+
+// make jquery global symbols
+window.$ = jQuery;
+window.jQuery = jQuery;
 
 Vue.config.productionTip = false;
 

@@ -61,6 +61,7 @@ import PageFooter from './components/PageFooter.vue';
 import SidebarToggle from './components/SidebarToggle.vue';
 import SystemMenu from './components/SystemMenu.vue';
 import { navigateToIfNeeded } from './util/VueRouterHelper';
+import { fixSemanticUiDropdown } from './util/SemanticFix';
 
 export default {
   data(){
@@ -82,8 +83,9 @@ export default {
     SystemMenu,
     SidebarToggle,
   },
-  mounted: function() {
-    window.$('.ui.dropdown').dropdown();
+  mounted(){
+    // initialize code for Semantic UI javascript
+    fixSemanticUiDropdown();
   },
   methods: {
     navigateToHome: function(){
