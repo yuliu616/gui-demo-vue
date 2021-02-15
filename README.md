@@ -14,7 +14,15 @@ A web (frontend) built with Vue.js.
 
 ## Environment (dependency)
 
+> this frontend project assume it is served behind a nginx like (http proxy),
+> and the proxy should also routing corresponding http requests to 
+> backend (api/services).
+
 - HTML/JavaScript
+- service:
+  - auth-service@1.0.x (service = auth-service via http proxy)
+  - people-service@1.0.x (service = people-service via http proxy)
+  - product-service@1.0.x (service = product-service via http proxy)
 
 ## Development Setup
 
@@ -52,3 +60,13 @@ project is compiled as static files, served by html server.
 ## Entry points
 
 - http://127.0.0.1:8080/
+
+# Docker support
+
+## building docker image
+
+- after building the app (npm), run this:
+
+```sh
+docker build -t gui-web-vue:1.0 .
+```
