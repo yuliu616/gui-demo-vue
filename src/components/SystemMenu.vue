@@ -16,7 +16,7 @@
 import { navigateToIfNeeded } from '../util/VueRouterHelper';
 import { MessageType } from '../stores/messageStore';
 import { message_text } from "../translation/en/message";
-import { view_name_text } from "../translation/en/word";
+import { word_text } from "../translation/en/word";
 import { sendMessage } from '../util/ViewCommonFunction';
 
 export default {
@@ -35,7 +35,7 @@ export default {
       if (code === 'logout') {
         await this.$store.dispatch('authStore/doLogout');
         this.sendMessage({
-          viewName: view_name_text['word.login'],
+          viewName: word_text['word.login'],
           type: MessageType.INFO,
           text: message_text['sentence.login.logoutDone'],
         });

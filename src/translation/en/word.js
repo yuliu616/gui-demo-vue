@@ -1,4 +1,4 @@
-const view_name_text = {
+const word_text = {
   'word.login': 'Login',
 };
-export { view_name_text };
+export { word_text };
