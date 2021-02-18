@@ -106,6 +106,10 @@ export default {
   transform: translateX(30%);
   opacity: 0;
 }
+
+form div.field > div.mx-datepicker {
+  width: 100%;
+}
 </style>
 
 <style scoped>

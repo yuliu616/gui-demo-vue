@@ -9,6 +9,7 @@ import { rootStore } from './stores/index';
 import 'semantic-ui-css/semantic.min.css';
 import 'semantic-ui-css/semantic.js';
 import 'toastr/build/toastr.min.css';
+import 'vue2-datepicker/index.css'
 
 // make jquery global symbols
 window.$ = jQuery;
