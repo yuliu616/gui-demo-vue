@@ -1,21 +1,20 @@
 import Vue from 'vue';
-import jQuery from 'jquery';
+import Antd from 'ant-design-vue';
+
 import App from './App.vue';
 import Sidebar from './Sidebar.vue';
 import Login from './Login.vue';
-import router from './router/router-index.vue';
+import router from './router/router-index';
 import { rootStore } from './stores/index';
 
 import 'semantic-ui-css/semantic.min.css';
-import 'semantic-ui-css/semantic.js';
-import 'toastr/build/toastr.min.css';
-import 'vue2-datepicker/index.css'
-
-// make jquery global symbols
-window.$ = jQuery;
-window.jQuery = jQuery;
+// import 'semantic-ui-css/semantic.js';
+import 'ant-design-vue/dist/antd.css';
+import './styles/my-ui-styles.css';
 
 Vue.config.productionTip = false;
+
+Vue.use(Antd);
 
 new Vue({
   router,

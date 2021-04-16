@@ -1,5 +1,7 @@
+import { describe } from 'mocha';
 import { expect } from 'chai';
-import { messageStore } from '../../src/stores/messageStore';
+
+let messageStore = require('../../src/stores/messageStore').messageStore;
 
 describe('messageStore', function(){
 

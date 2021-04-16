@@ -1,43 +1,74 @@
 <template>
   <div id="breadcrumb">
-    <div class="ui breadcrumb">
-      <a class="section" v-on:click="navigateToHome()">
-        Home
-      </a>
-      <template v-for="node in currentLocationNodeList">
-        <i class="right chevron circular inverted icon divider"></i>
-        <a class="section" v-on:click="navigateTo(node.path)">
+    <a-breadcrumb>
+      <span slot="separator">
+        <a-icon type="caret-right" class="breadcrumb-separator" />
+      </span>
+      <a-breadcrumb-item href="">
+        <a-icon type="home" class="breadcrumb-home icon" 
+        v-on:click="navigateToHome()" />
+      </a-breadcrumb-item>
+      <a-breadcrumb-item :key="node.name"
+      v-for="node in nodeListExceptLast">
+        <span class="breadcrumb-text"
+        v-on:click="navigateTo(node.path)">
           {{ node.name }}
-        </a>
-      </template>
-    </div>
+        </span>
+      </a-breadcrumb-item>
+      <a-breadcrumb-item>
+        <span class="last breadcrumb-text">{{ lastNodeName }}</span>
+      </a-breadcrumb-item>
+    </a-breadcrumb>
   </div>
 </template>
 
-<script>
-import { navigateToIfNeeded, buildCurrentRouteStack } from '../util/VueRouterHelper';
+<script lang="ts">
+import Vue from 'vue';
+import { Route } from 'vue-router';
+import { word_text } from '../translation/en/word';
 
-export default {
+import { VueRouterHelper } from '../util/VueRouterHelper';
+
+export default Vue.extend({
   name: 'Breadcrumb',
-  data() {
+  data(): ViewStateModel {
     return {
       currentLocationNodeList: [],
     };
+  },
+  computed: {
+    nodeListExceptLast(): PathNode[] {
+      if (this.currentLocationNodeList.length > 1) {
+        return this.currentLocationNodeList.slice(0, 
+          this.currentLocationNodeList.length-1);
+      } else {
+        return [];
+      }
+    },
+    lastNodeName(): string {
+      if (this.currentLocationNodeList.length > 0) {
+        return this.currentLocationNodeList[this.currentLocationNodeList.length-1].name;
+      } else {
+        return word_text['word.Home'];
+      }
+    }
   },
   mounted(){
     this.rebuildCurrentRouteNodeList();
   },
   methods: {
     navigateToHome: function(){
-      navigateToIfNeeded(this.$router, '/');
+      VueRouterHelper.navigateToIfNeeded(this.$router, '/');
     },
-    navigateTo: function(targetPath){
-      navigateToIfNeeded(this.$router, targetPath);
+    navigateTo: function(targetPath: string){
+      VueRouterHelper.navigateToIfNeeded(this.$router, targetPath);
     },
     rebuildCurrentRouteNodeList(){
-      let lastMatchedRoute = this.$router.currentRoute.matched[this.$router.currentRoute.matched.length-1];
-      let stackOfCurrentRoute = [];
-      buildCurrentRouteStack(lastMatchedRoute, this.$router.currentRoute.params, stackOfCurrentRoute);
+      let itemIndex = this.$router.currentRoute.matched.length-1;
+      let lastMatchedRoute =
+        this.$router.currentRoute.matched[itemIndex];
+      let stackOfCurrentRoute: {name:string, path:string}[] = [];
+      VueRouterHelper.buildCurrentRouteStack(lastMatchedRoute, this.$router.currentRoute.params, stackOfCurrentRoute);
       stackOfCurrentRoute = stackOfCurrentRoute.reverse();
       this.currentLocationNodeList = stackOfCurrentRoute;
     },
@@ -45,12 +76,20 @@ export default {
   components: {
   },
   watch: {
-    $route(to, from){
+    $route(to: Route, from: Route){
       this.rebuildCurrentRouteNodeList();
     },
   },
-};
+});
 
+interface ViewStateModel {
+  currentLocationNodeList: PathNode[];
+}
+
+interface PathNode {
+  name:string;
+  path:string;
+}
 </script>
 
 <style scoped>
@@ -61,5 +100,19 @@ export default {
 }
 #breadcrumb > div {
   align-self: flex-end;
+}
+.breadcrumb-home.icon {
+  color: white;
+}
+.breadcrumb-separator {
+  color: white;
+}
+.breadcrumb-text {
+  color: white;
+  cursor: pointer;
+}
+.last.breadcrumb-text {
+  color: grey;
+  cursor: default;
 }
 </style>

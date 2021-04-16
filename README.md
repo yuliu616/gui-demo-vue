@@ -1,6 +1,6 @@
 # GUI Web
 
-> code name: `gui-web`.
+> code name: `gui-web-vue`.
 
 A web (frontend) built with Vue.js.
 
@@ -11,6 +11,7 @@ A web (frontend) built with Vue.js.
 - Vuex 3.6
 - Vue CLI 4.5
 - Semantic UI 2.4
+- Ant Design Vue 1.7
 
 ## Environment (dependency)
 

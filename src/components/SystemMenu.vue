@@ -12,39 +12,48 @@
   </div>
 </template>
 
-<script>
-import { navigateToIfNeeded } from '../util/VueRouterHelper';
+<script lang="ts">
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import { VueRouterHelper } from '../util/VueRouterHelper';
 import { MessageType } from '../stores/messageStore';
 import { message_text } from "../translation/en/message";
 import { word_text } from "../translation/en/word";
-import { sendMessage } from '../util/ViewCommonFunction';
+// import { sendMessage } from '../util/ViewCommonFunction';
+import { MenuItem } from '../stores/menuStore';
 
-export default {
+export default Vue.extend({
   name: 'SystemMenu',
-  data() {
+  data(): ViewStateModel {
+    let menuList: MenuItem[] = [
+      { code: 'about', title: 'About', targetPath: '/about' },
+      { code: 'logout', title: 'Logout', insertDivider: true },
+    ];
     return {
-      menuRoot: [
-        { code: 'about', title: 'About', targetPath: '/about' },
-        { code: 'logout', title: 'Logout', insertDivider: true },
-      ],
+      menuRoot: menuList,
     };
   },
   methods: {
-    sendMessage,
-    async navigateTo(targetPath, code){
+    // sendMessage,
+    async navigateTo(targetPath: string, code: string){
+      // let router: VueRouter = this.$router;
       if (code === 'logout') {
         await this.$store.dispatch('authStore/doLogout');
-        this.sendMessage({
+        await this.$store.dispatch('messageStore/add', {
           viewName: word_text['word.login'],
           type: MessageType.INFO,
           text: message_text['sentence.login.logoutDone'],
         });
         return;
       }
-      navigateToIfNeeded(this.$router, targetPath);
+      VueRouterHelper.navigateToIfNeeded(this.$router, targetPath);
     },
   },
   components: {
   },
-};
+});
+
+interface ViewStateModel {
+  menuRoot: MenuItem[];
+}
 </script>

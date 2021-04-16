@@ -1,37 +1,44 @@
 <template>
-  <div class="message ui cards">
+  <div class="message my cards">
 
-    <div class="message card" v-for="m in messageList" :key="m.id">
-      <div class="content">
-        <div class="message header">
-          {{ m.viewName }}
-        </div>
-        <div class="message description">
-          {{ m.text }}
-        </div>      
-      </div>
-  </div>
+    <a-card class="message small-gap card"
+    :body-style="{ 
+      padding: '1.2em',
+    }"
+    v-for="m in messageList" :key="m.id">
+      <a-card-meta class="view-name" 
+        :title="m.viewName" :description="m.text">
+      </a-card-meta>
+    </a-card>
 
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+import { Message, MessageStoreState } from '../stores/messageStore';
+
+export default Vue.extend({
   name: 'MessageLog',
   data() {
     return {
     };
   },
   computed: {
+    iMessageStore(): MessageStoreState {
+      return this.$store.state.messageStore;
+    },
     // last 4 items in messageList
-    messageList: self=>self.$store.state.messageStore.messageList
-      .slice().reverse().slice(0, 4).reverse(),
+    messageList(): Message[] {
+      return this.iMessageStore.messageList
+        .slice().reverse().slice(0, 4).reverse();
+    },
   },
   methods: {
   },
   components: {
   },
-};
+});
 </script>
 
 <style scoped>

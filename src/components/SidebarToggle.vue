@@ -4,18 +4,21 @@
   </button>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
   name: 'SidebarToggle',
   data() {
     return {};
   },
   methods: {
     onTogglePressed: function(){
-      window.$('.ui.sidebar').sidebar('toggle');
+      // window.$('.ui.sidebar').sidebar('toggle'); // TODO: re-implement with antd
+      console.log('onTogglePressed !!');
     },
   },
   components: {
   },
-};
+});
 </script>

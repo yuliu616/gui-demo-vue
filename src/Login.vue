@@ -2,43 +2,47 @@
   <div class="background" v-show="!loggedIn" 
     v-bind:class="{morning: isMorningTime, dayTime: isDayTime, night: isNightTime}">
     
-    <div class="ui basic segment">
-      <div class="ui login card">
+    <a-card class="my login solo card" 
+    :head-style="{
+      'text-align': 'center',
+    }"
+    title="GUI Demo">
+      <a-form layout="inline"
+      :wrapper-col="{ span: 24 }" 
+      @submit.prevent="submittingLoginForm()">
 
-        <div class="content">
-          <div class="center aligned login header">GUI Demo</div>
-          <form class="ui form" v-on:submit.prevent="submittingLoginForm()">
+        <a-form-item label="User Name">
+          <a-input v-model="username"
+          placeholder="User Name" :auto-focus="true" />
+        </a-form-item>
+        <a-form-item label="Password">
+          <a-input-password v-model="password"
+            placeholder="input password" />
+        </a-form-item>
 
-            <div class="field">
-              <label>User Name</label>
-              <input type="text" v-model="username"
-                placeholder="User Name" autofocus>
-            </div>
-            <div class="field">
-              <label>Password</label>
-              <input type="password" v-model="password">
-            </div>
-            <div class="field">
-              <input class="ui primary button" type="submit" value="Login">
-            </div>
-            
-          </form>    
-        </div>
+        <a-form-item style="margin-top: 1.4em;">
+          <a-button type="primary" html-type="submit">
+            Login
+          </a-button>
+        </a-form-item>
 
-      </div>
-    </div>
+      </a-form>
+    </a-card>
+
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import { MessageType } from './stores/messageStore';
 import { message_text } from "./translation/en/message";
 import { word_text } from "./translation/en/word";
-import { sendMessage } from './util/ViewCommonFunction';
+// import { sendMessage } from './util/ViewCommonFunction';
+import { AuthStoreState } from './stores/authStore';
 
-export default {
+export default Vue.extend({
   name: 'Login',
-  data() {
+  data(): ViewStateModel {
     return {
       username: '',
       password: '',
@@ -48,7 +52,12 @@ export default {
     };
   },
   computed: {
-    loggedIn: self=>self.$store.state.authStore.loggedIn,
+    iAuthStore(): AuthStoreState {
+      return this.$store.state.authStore;
+    },
+    loggedIn(): boolean {
+      return this.iAuthStore.loggedIn;
+    },
   },
   mounted: function(){
     let hourOfDay = new Date().getHours();
@@ -57,20 +66,20 @@ export default {
     this.isNightTime = (hourOfDay > 19 || hourOfDay < 6);
   },
   methods: {
-    sendMessage,
+    // sendMessage,
     async submittingLoginForm(){
       try {
         await this.$store.dispatch('authStore/doLogin', {
           username: this.username,
           password: this.password,
         });
-        this.sendMessage({
+        await this.$store.dispatch('messageStore/add', {
           viewName: word_text['word.login'],
           type: MessageType.INFO,
           text: message_text['sentence.login.passed'],
         });
       } catch(err){
-        await this.sendMessage({
+        await this.$store.dispatch('messageStore/add', {
           viewName: word_text['word.login'],
           type: MessageType.ERROR,
           text: message_text['sentence.login.failed'],
@@ -84,13 +93,22 @@ export default {
   },
   components: {
   },
-};
+});
+
+interface ViewStateModel {
+  username: string;
+  password: string;
+  isMorningTime: boolean;
+  isDayTime: boolean;
+  isNightTime: boolean;
+}
 </script>
 
 <style scoped>
 div.background {
   width: 100%;
   height: 100%;
+  padding: 1px;
 }
 
 div.background.morning {
@@ -161,7 +179,8 @@ div.background.night {
 
 }
 
-div.login.card {
+div.login.solo.card {
+  max-width: 24em;
   margin: 25% auto;
 }
 

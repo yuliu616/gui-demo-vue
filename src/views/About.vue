@@ -1,5 +1,5 @@
 <template>
-  <div class="ui info message">
-    Dummy About
-  </div>
+  <a-alert message="About" 
+    description="Well, i have nothing more to tell u."
+    type="info" show-icon />
 </template>

@@ -1,14 +1,15 @@
 import { 
   ERROR_INVALID_VALUE, 
+  FailureExplanation,
+  ValidationRule
 } from './Validation';
 
-export class MinValueRule {
+export class MinValueRule implements ValidationRule {
 
-  constructor(min) {
-    this.min = min;
+  constructor(private min: any) {
   }
 
-  validate(value){
+  validate(value: any): FailureExplanation|null {
     if (value !== null && value < this.min) {
       return { reason: ERROR_INVALID_VALUE };
     } else {

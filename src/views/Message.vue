@@ -28,7 +28,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="message in pagedRowList">
+        <tr v-for="message in pagedRowList" :key="message.id">
           <td v-if="selectionModeEnabled">
             <div class="ui fitted toggle checkbox">
               <input type="checkbox" v-model="rowChecked[message.id]">
@@ -59,12 +59,14 @@
               </div>
             </div>
             <div v-if="selectionModeEnabled">
-              <button class="ui red button" v-on:click="onDeleteSelectedPressed()">
-                Delete those selected
-              </button>
-              <button class="ui button" v-on:click="onAbortCurrentModePressed()">
-                Abort
-              </button>
+              <a-button-group>
+                <a-button type="danger" v-on:click="onDeleteSelectedPressed()">
+                  Delete those selected
+                </a-button>
+                <a-button v-on:click="onAbortCurrentModePressed()">
+                  Abort
+                </a-button>
+              </a-button-group>
             </div>
             <div class="ui right floated pagination menu">
               <a class="icon item" 
@@ -97,14 +99,16 @@
   </div>
 </template>
 
-<script>
-import * as moment from 'moment';
-import { takePage, calcPageCount } from '../util/TableHelper';
+<script lang="ts">
+import Vue from 'vue';
+import moment from 'moment';
+import { TableHelper } from '../util/TableHelper';
 import { DateFormat } from '../util/DateHelper';
+import { Message, MessageStoreState } from '../stores/messageStore';
 
-export default {
+export default Vue.extend({
   name: 'Message',
-  data() {
+  data(): ViewStateModel {
     return {
       currentPage: 0,
       pageSize: 10,
@@ -113,29 +117,42 @@ export default {
     };
   },
   computed: {
-    tableRowList: self=>self.$store.state.messageStore.messageList.slice().reverse(),
-    pagedRowList: self=>takePage(self.tableRowList, self.currentPage, self.pageSize),
-    pageCount: self=>calcPageCount(self.tableRowList.length, self.pageSize),
-    pageNumListForSeeking: self=>{
-      // (return 1-based pageNum)
-      // show only -2 to +2 of current page
-      let out = [];
-      for (let i=Math.max(self.currentPage-2, 0);i<=Math.min(self.currentPage+2,self.pageCount-1);i++) {
+    iMessageStoreState(): MessageStoreState {
+      return this.$store.state.messageStore;
+    },
+    tableRowList(): Message[]{
+      return this.iMessageStoreState.messageList.slice().reverse();
+    },
+    pagedRowList(): Message[]{
+      return TableHelper.takePage(this.tableRowList, this.currentPage, this.pageSize);
+    },
+    pageCount(): number{
+      return TableHelper.calcPageCount(this.tableRowList.length, this.pageSize);
+    },
+    /**
+     * (return 1-based pageNum)
+     * show only -2 to +2 of current page
+     */
+    pageNumListForSeeking(): number[]{
+      let out: number[] = [];
+      for (let i=Math.max(this.currentPage-2, 0);i<=Math.min(this.currentPage+2,this.pageCount-1);i++) {
         out.push(i+1);
       }
       return out;
     },
-    lastPage: self=>self.pageCount-1,
-    pagingButtonEnabled: self=>!self.selectionModeEnabled,
+    lastPage(): number {
+      return this.pageCount-1;
+    },
+    pagingButtonEnabled(): boolean {
+      return !this.selectionModeEnabled;
+    },
   },
   methods: {
-    takePage,
-    calcPageCount,
-    presentDate(value){
+    presentDate(value: Date): string {
       // return moment(value).format(DateFormat.DATE_TIME_LONG);
       return moment(value).format(DateFormat.DATE_TIME_WITHOUT_SEC);
     },
-    navToPage(page){
+    navToPage(page: number){
       if (!this.pagingButtonEnabled) {
         return;
       }
@@ -150,10 +167,10 @@ export default {
       await this.$store.dispatch('messageStore/removeAll');
     },
     async onDeleteSelectedPressed(){
-      let targetMessageIdList = [];
+      let targetMessageIdList: number[] = [];
       for (let id in this.rowChecked) {
         if (this.rowChecked[id]) {
-          targetMessageIdList.push(id);
+          targetMessageIdList.push(+id);
         }
       }
       // console.log('targetMessageIdList =', targetMessageIdList);
@@ -176,7 +193,20 @@ export default {
   },
   components: {
   },
-};
+});
+
+interface ViewStateModel {
+  
+  currentPage: number;
+  pageSize: number;
+  
+  selectionModeEnabled: boolean;
+
+  /**
+   * key: message.id, value: is checked.
+   */
+  rowChecked: {[_:number]: boolean};
+}
 </script>
 
 <style scoped>

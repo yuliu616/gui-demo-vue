@@ -36,27 +36,41 @@
   </div>
 </template>
 
-<script>
-import { navigateToIfNeeded } from './util/VueRouterHelper';
+<script lang="ts">
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import { AuthStoreState } from './stores/authStore';
+import { MenuItem, MenuStoreState } from './stores/menuStore';
+import { VueRouterHelper } from './util/VueRouterHelper';
 
-export default {
+export default Vue.extend({
   name: 'Sidebar',
   data() {
     return {
     };
   },
   computed: {
-    loggedIn: self=>self.$store.state.authStore.loggedIn,
-    menuRoot: self=>self.$store.state.menuStore.menuRoot,
+    iAuthStore(): AuthStoreState {
+      return this.$store.state.authStore;
+    },
+    iMenuStore(): MenuStoreState {
+      return this.$store.state.menuStore;
+    },
+    loggedIn(): boolean {
+      return this.iAuthStore.loggedIn;
+    },
+    menuRoot(): MenuItem[] {
+      return this.iMenuStore.menuRoot;
+    },
   },
   methods: {
     navigateToHome: function(){
-      navigateToIfNeeded(this.$router, '/');
+      VueRouterHelper.navigateToIfNeeded(this.$router, '/');
     },
-    navigateTo: function(targetPath){
-      navigateToIfNeeded(this.$router, targetPath);
+    navigateTo: function(targetPath: string){
+      VueRouterHelper.navigateToIfNeeded(this.$router, targetPath);
     },
-    badgeOfMenu: function(code){
+    badgeOfMenu: function(code: string): number {
       if (code == 'message') {
         return this.$store.getters['messageStore/messageCount'];
       } else {
@@ -66,7 +80,7 @@ export default {
   },
   components: {
   },
-};
+});
 </script>
 
 <style scoped>

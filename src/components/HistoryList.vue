@@ -1,27 +1,30 @@
 <template>
-  <div class="history ui link cards">
-
-    <div class="history card" v-for="it in historyList" :key="it.path"
-      v-on:click="onCardClicked(it)">
-      <div class="content">
-        <div class="history description">
-          {{ it.viewName }}
-          <span class="ui right floated blue cat small label">
-            {{ it.cat }}
-          </span>
-        </div>      
-      </div>
-  </div>
+  <div class="history my cards">
+    
+    <a-card hoverable class="history card"
+    :body-style="{ 
+      padding: '1.2em',
+    }"
+    v-for="it in historyList" :key="it.path"
+    v-on:click="onCardClicked(it)">
+      <a-card-meta class="view-name" :title="it.viewName">
+      </a-card-meta>
+      <span class="my blue label">
+        {{ it.cat }}
+      </span>
+    </a-card>
 
   </div>
 </template>
 
-<script>
-import { navigateToIfNeeded, getExactPathForRouteWithParams } from '../util/VueRouterHelper';
+<script lang="ts">
+import Vue from 'vue';
+import { Route } from 'vue-router';
+import { VueRouterHelper } from '../util/VueRouterHelper';
 
-export default {
+export default Vue.extend({
   name: 'HistoryList',
-  data() {
+  data(): ViewStateModel {
     return {
       historyList: [
         // {viewName: "People List", cat: "People", path: "/people/list"},
@@ -34,10 +37,10 @@ export default {
     this.addCurrentRouteToHistory();
   },
   methods: {
-    onCardClicked(historyItem){
-      navigateToIfNeeded(this.$router, historyItem.path);
+    onCardClicked(historyItem: HistoryItem){
+      VueRouterHelper.navigateToIfNeeded(this.$router, historyItem.path);
     },
-    addToHistoryList(route){
+    addToHistoryList(route: HistoryItem){
       // if already exists, remove the existing before adding
       let found = this.historyList.findIndex(it=>it.path === route.path);
       if (found >= 0) {
@@ -49,11 +52,11 @@ export default {
       let firstMatchedRoute = this.$router.currentRoute.matched[0];
       let lastMatchedRoute = 
         this.$router.currentRoute.matched[this.$router.currentRoute.matched.length-1];
-      let currentRoutePath = getExactPathForRouteWithParams(
+      let currentRoutePath = VueRouterHelper.getExactPathForRouteWithParams(
         lastMatchedRoute.path, this.$router.currentRoute.params);
       this.addToHistoryList({
-        viewName: lastMatchedRoute.name,
-        cat: firstMatchedRoute.name,
+        viewName: lastMatchedRoute.name || '',
+        cat: firstMatchedRoute.name || '',
         path: currentRoutePath,
       });
     }
@@ -61,11 +64,21 @@ export default {
   components: {
   },
   watch: {
-    $route(to, from){
+    $route(to: Route, from: Route){
       this.addCurrentRouteToHistory();
     },
   },
-};
+});
+
+interface ViewStateModel {
+  historyList: HistoryItem[];
+}
+
+interface HistoryItem {
+  viewName: string;
+  cat: string;
+  path: string;
+}
 </script>
 
 <style scoped>
@@ -77,5 +90,8 @@ div.history.cards {
 div.history.card {
   width: 18em;
   font-size: 80%;
+}
+div.view-name {
+  margin-bottom: 4px;
 }
 </style>

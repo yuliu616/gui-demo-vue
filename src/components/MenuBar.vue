@@ -25,23 +25,31 @@
   </div>
 </template>
 
-<script>
-import { navigateToIfNeeded } from '../util/VueRouterHelper';
+<script lang="ts">
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import { VueRouterHelper } from '../util/VueRouterHelper';
+import { MenuItem, MenuStoreState } from '../stores/menuStore';
 
-export default {
+export default Vue.extend({
   name: 'MenuBar',
   data() {
     return {
     };
   },
   computed: {
-    menuRoot: self=>self.$store.state.menuStore.menuRoot,
+    iMenuStore(): MenuStoreState {
+      return this.$store.state.menuStore;
+    },
+    menuRoot(): MenuItem[] {
+      return this.iMenuStore.menuRoot;
+    },
   },
   methods: {
-    navigateTo: function(targetPath){
-      navigateToIfNeeded(this.$router, targetPath);
+    navigateTo: function(targetPath: string){
+      VueRouterHelper.navigateToIfNeeded(this.$router, targetPath);
     },
-    badgeOfMenu: function(code){
+    badgeOfMenu: function(code: string){
       if (code == 'message') {
         return this.$store.getters['messageStore/messageCount'];
       } else {
@@ -51,7 +59,7 @@ export default {
   },
   components: {
   },
-};
+});
 </script>
 
 <style scoped>

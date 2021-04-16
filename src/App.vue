@@ -52,7 +52,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 import Breadcrumb from './components/Breadcrumb.vue';
 import HistoryList from './components/HistoryList.vue';
 import MenuBar from './components/MenuBar.vue';
@@ -60,11 +62,12 @@ import MessageLog from './components/MessageLog.vue';
 import PageFooter from './components/PageFooter.vue';
 import SidebarToggle from './components/SidebarToggle.vue';
 import SystemMenu from './components/SystemMenu.vue';
-import { navigateToIfNeeded } from './util/VueRouterHelper';
-import { fixSemanticUiDropdown } from './util/SemanticFix';
+import { VueRouterHelper } from './util/VueRouterHelper';
+// import { fixSemanticUiDropdown } from './util/SemanticFix';
+import { AuthStoreState } from './stores/authStore';
 
-export default {
-  data(){
+export default Vue.extend({
+  data(): ViewStateModel {
     return {
       showProdLogo: process.env.VUE_APP_LOGO_USE=='PROD',
       showDevLogo: process.env.VUE_APP_LOGO_USE=='DEV',
@@ -72,7 +75,12 @@ export default {
     };
   },
   computed: {
-    loggedIn: self=>self.$store.state.authStore.loggedIn,
+    iAuthStore(): AuthStoreState {
+      return this.$store.state.authStore;
+    },
+    loggedIn(): boolean {
+      return this.iAuthStore.loggedIn;
+    },
   },
   components: {
     Breadcrumb,
@@ -83,16 +91,22 @@ export default {
     SystemMenu,
     SidebarToggle,
   },
-  mounted(){
-    // initialize code for Semantic UI javascript
-    fixSemanticUiDropdown();
-  },
+  // mounted(){
+  //   // initialize code for Semantic UI javascript
+  //   fixSemanticUiDropdown();
+  // },
   methods: {
     navigateToHome: function(){
-      navigateToIfNeeded(this.$router, '/');
+      VueRouterHelper.navigateToIfNeeded(this.$router, '/');
     },
   },
-};
+});
+
+interface ViewStateModel {
+  showProdLogo: boolean;
+  showDevLogo: boolean;
+  logoBackgroundColor: string;
+}
 </script>
 
 <style>
@@ -287,6 +301,7 @@ div.messageView {
   width: 90px;
   height: 90px;
   margin: 16px 6px;
+  cursor: pointer;
 }
 
 </style>

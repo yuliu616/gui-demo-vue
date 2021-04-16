@@ -6,17 +6,19 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
   name: 'PageFooter',
   data() {
-    return {};
-  },
-  methods: {
-  },
-  components: {
-  },
-};
+      return {};
+    },
+    methods: {
+    },
+    components: {
+    },
+});
 </script>
 
 <style scoped>
