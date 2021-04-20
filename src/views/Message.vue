@@ -1,22 +1,20 @@
 <template>
   <div>
-    <div class="ui message" v-if="selectionModeEnabled">
-      <div class="header">
-        Selection Mode
-      </div>
-      <p>
-        Please select message to be deleted.
-      </p>
+
+    <a-alert type="info" show-icon 
+        v-if="selectionModeEnabled"
+        message="Selection Mode" 
+        description="Please select message to be deleted."
+    />
+
+    <!-- no record display -->
+    <div class="my lead panel"
+    v-if="pagedRowList.length==0">
+      <a-empty />
     </div>
-    <div class="ui message" v-if="pageCount==0">
-      <div class="header">
-        Message List
-      </div>
-      <p>
-        There is no message at all.
-      </p>
-    </div>
-    <table class="ui tablet striped stackable table" v-show="pageCount > 0">
+
+    <table class="ui tablet striped stackable table" 
+    v-if="pagedRowList.length > 0">
 
       <thead class="full-width">
         <tr>
@@ -35,7 +33,7 @@
               <label></label>
             </div>
           </td>
-          <td>{{ presentDate(message.time) }}</td>
+          <td>{{ presentDateTime(message.time) }}</td>
           <td>{{ message.text }}</td>
           <td class="right aligned">{{ message.viewName }}</td>
         </tr>
@@ -44,20 +42,21 @@
       <tfoot class="full-width">
         <tr>
           <th colspan="999">
-            <div class="ui compact menu" v-show="!selectionModeEnabled">
-              <div class="ui dropdown item">
-                More
-                <i class="dropdown icon"></i>
-                <div class="menu">
-                  <div class="item" v-on:click="onClearAllPressed()">
-                    Clear messages
-                  </div>
-                  <div class="item" v-on:click="onSelectMessagePressed()">
-                    Select messages ...
-                  </div>
-                </div>
-              </div>
-            </div>
+
+            <a-dropdown v-if="!selectionModeEnabled">
+              <a-menu slot="overlay">
+                <a-menu-item v-on:click="onClearAllPressed()">
+                  Clear messages
+                </a-menu-item>
+                <a-menu-item v-on:click="onSelectMessagePressed()">
+                  Select messages ...
+                </a-menu-item>
+              </a-menu>
+              <a-button style="margin-left: 8px">
+                More <a-icon type="down" />
+              </a-button>
+            </a-dropdown>
+
             <div v-if="selectionModeEnabled">
               <a-button-group>
                 <a-button type="danger" v-on:click="onDeleteSelectedPressed()">
@@ -68,6 +67,8 @@
                 </a-button>
               </a-button-group>
             </div>
+
+            <!-- pagination control -->
             <div class="ui right floated pagination menu">
               <a class="icon item" 
                 v-bind:class="{ 'disabled': !pagingButtonEnabled || currentPage<=0 }" 
@@ -86,11 +87,12 @@
                 {{ pageNum }}
               </a>
               <a class="icon item" 
-                v-bind:class="{'disabled': !pagingButtonEnabled || currentPage>=lastPage}"
+                v-bind:class="{'disabled': !pagingButtonEnabled || isLastPage}"
                 v-on:click="navToPage(currentPage+1)">
                 <i class="right angle icon"></i>
               </a>
             </div>
+
           </th>
         </tr>
       </tfoot>
@@ -101,10 +103,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from 'moment';
 import { TableHelper } from '../util/TableHelper';
-import { DateFormat } from '../util/DateHelper';
+import { DateHelper } from '../util/DateHelper';
 import { Message, MessageStoreState } from '../stores/messageStore';
+import { MessageService } from '@/service/MessageService';
 
 export default Vue.extend({
   name: 'Message',
@@ -119,6 +121,10 @@ export default Vue.extend({
   computed: {
     iMessageStoreState(): MessageStoreState {
       return this.$store.state.messageStore;
+    },
+    iMessageService: ()=>MessageService(),
+    isLastPage(): boolean {
+      return this.currentPage>=this.lastPage;
     },
     tableRowList(): Message[]{
       return this.iMessageStoreState.messageList.slice().reverse();
@@ -148,10 +154,7 @@ export default Vue.extend({
     },
   },
   methods: {
-    presentDate(value: Date): string {
-      // return moment(value).format(DateFormat.DATE_TIME_LONG);
-      return moment(value).format(DateFormat.DATE_TIME_WITHOUT_SEC);
-    },
+    presentDateTime: (value: Date)=>DateHelper.presentDateTime(value),
     navToPage(page: number){
       if (!this.pagingButtonEnabled) {
         return;
@@ -164,7 +167,7 @@ export default Vue.extend({
       this.currentPage = page;
     },
     async onClearAllPressed(){
-      await this.$store.dispatch('messageStore/removeAll');
+      await this.iMessageService.clearMessage();
     },
     async onDeleteSelectedPressed(){
       let targetMessageIdList: number[] = [];
@@ -174,7 +177,7 @@ export default Vue.extend({
         }
       }
       // console.log('targetMessageIdList =', targetMessageIdList);
-      await this.$store.dispatch('messageStore/removeList', targetMessageIdList);
+      await this.iMessageService.removeMessageByIdList(targetMessageIdList);
       this.selectionModeEnabled = false;
       this.rowChecked = {};
 
@@ -199,13 +202,14 @@ interface ViewStateModel {
   
   currentPage: number;
   pageSize: number;
-  
+
   selectionModeEnabled: boolean;
 
   /**
    * key: message.id, value: is checked.
    */
   rowChecked: {[_:number]: boolean};
+
 }
 </script>
 

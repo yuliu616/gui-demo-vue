@@ -52,18 +52,6 @@ export const messageStore = {
       copy.time = new Date();
       store.commit('addMessage', copy);
       await store.dispatch('persist');
-      if (copy.type == MessageType.INFO) {
-        // toastr.info(copy.text, copy.viewName); //TODO:
-      } else if (copy.type == MessageType.WARN) {
-        // toastr.warning(copy.text, copy.viewName); //TODO:
-      } else if (copy.type == MessageType.ERROR) {
-        // toastr.error(copy.text, copy.viewName); //TODO:
-      } else if (copy.type == MessageType.GOOD) {
-        // toastr.success(copy.text, copy.viewName); //TODO:
-      } else {
-        // toastr.info(copy.text, copy.viewName); //TODO:
-      }
-      console.log(`toastr[${copy.type}]: ${copy.viewName}: ${copy.text}`); //TODO:
     },
     async removeList(store: Store<MessageStoreState>, idList: number[]){
       idList.forEach(id=>store.commit('removeById', id));

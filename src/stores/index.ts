@@ -23,7 +23,7 @@ axios.interceptors.request.use(function(req){
     if (!req.url.startsWith('/api/auth-service')) {
       // console.log('interceptors: req.url =', req.url);
       let access_token = (<any>rootStore.state).authStore.access_token;
-      req.headers['authorization']=`Bearer: ${access_token}`;  
+      req.headers['authorization']=`Bearer ${access_token}`;  
     }  
   }
   return req;

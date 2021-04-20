@@ -1,5 +1,4 @@
 import { Store } from 'vuex';
-import { AuthService } from "../service/AuthService";
 
 export const authStore = {
   namespaced: true,
@@ -37,15 +36,11 @@ export const authStore = {
       };
       localStorage.setItem('authStore', JSON.stringify(authStoreJson));
     },
-    async doLogin(store: Store<AuthStoreState>, loginPayload: LoginDto){
-      let res = await AuthService().post_login({ body: loginPayload });
-      if (!res.access_token) {
-        throw new Error('access_token missing in login response.');
-      }
-      store.commit('setLoggedIn', res.access_token);
+    async onLoginPass(store: Store<AuthStoreState>, accessToken: string){
+      store.commit('setLoggedIn', accessToken);
       await store.dispatch('persist');
     },
-    async doLogout(store: Store<AuthStoreState>){
+    async onLogout(store: Store<AuthStoreState>){
       store.commit('setLoggedOut', false);
       await store.dispatch('persist');
     },

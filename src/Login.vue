@@ -1,5 +1,5 @@
 <template>
-  <div class="background" v-show="!loggedIn" 
+  <div class="background" v-if="!loggedIn" 
     v-bind:class="{morning: isMorningTime, dayTime: isDayTime, night: isNightTime}">
     
     <a-card class="my login solo card" 
@@ -37,8 +37,8 @@ import Vue from 'vue';
 import { MessageType } from './stores/messageStore';
 import { message_text } from "./translation/en/message";
 import { word_text } from "./translation/en/word";
-// import { sendMessage } from './util/ViewCommonFunction';
-import { AuthStoreState } from './stores/authStore';
+import { MessageService, MessageServiceImpl } from '@/service/MessageService';
+import { AuthProvider, AuthProviderImpl } from '@/service/AuthProvider';
 
 export default Vue.extend({
   name: 'Login',
@@ -52,11 +52,10 @@ export default Vue.extend({
     };
   },
   computed: {
-    iAuthStore(): AuthStoreState {
-      return this.$store.state.authStore;
-    },
+    iMessageService: ()=>MessageService(),
+    iAuthProvider: ()=>AuthProvider(),
     loggedIn(): boolean {
-      return this.iAuthStore.loggedIn;
+      return this.iAuthProvider.isLoggedIn();
     },
   },
   mounted: function(){
@@ -66,20 +65,15 @@ export default Vue.extend({
     this.isNightTime = (hourOfDay > 19 || hourOfDay < 6);
   },
   methods: {
-    // sendMessage,
     async submittingLoginForm(){
       try {
-        await this.$store.dispatch('authStore/doLogin', {
-          username: this.username,
+        await this.iAuthProvider.login({
+          username: this.username, 
           password: this.password,
         });
-        await this.$store.dispatch('messageStore/add', {
-          viewName: word_text['word.login'],
-          type: MessageType.INFO,
-          text: message_text['sentence.login.passed'],
-        });
+
       } catch(err){
-        await this.$store.dispatch('messageStore/add', {
+        await this.iMessageService.sendMessage({
           viewName: word_text['word.login'],
           type: MessageType.ERROR,
           text: message_text['sentence.login.failed'],

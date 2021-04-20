@@ -63,8 +63,7 @@ import PageFooter from './components/PageFooter.vue';
 import SidebarToggle from './components/SidebarToggle.vue';
 import SystemMenu from './components/SystemMenu.vue';
 import { VueRouterHelper } from './util/VueRouterHelper';
-// import { fixSemanticUiDropdown } from './util/SemanticFix';
-import { AuthStoreState } from './stores/authStore';
+import { AuthProvider, AuthProviderImpl } from '@/service/AuthProvider';
 
 export default Vue.extend({
   data(): ViewStateModel {
@@ -75,11 +74,11 @@ export default Vue.extend({
     };
   },
   computed: {
-    iAuthStore(): AuthStoreState {
-      return this.$store.state.authStore;
+    iAuthProvider(): AuthProviderImpl {
+      return AuthProvider();
     },
     loggedIn(): boolean {
-      return this.iAuthStore.loggedIn;
+      return this.iAuthProvider.isLoggedIn();
     },
   },
   components: {
@@ -91,10 +90,6 @@ export default Vue.extend({
     SystemMenu,
     SidebarToggle,
   },
-  // mounted(){
-  //   // initialize code for Semantic UI javascript
-  //   fixSemanticUiDropdown();
-  // },
   methods: {
     navigateToHome: function(){
       VueRouterHelper.navigateToIfNeeded(this.$router, '/');

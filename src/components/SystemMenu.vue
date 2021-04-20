@@ -1,15 +1,18 @@
 <template>
-  <div class="ui floating icon dropdown button">
-    <i class="th icon"></i>
-    <div class="menu">
+  <a-dropdown>
+    <a-menu slot="overlay">
       <template v-for="menu in menuRoot">
-        <div class="divider" v-if="menu.insertDivider"></div>
-        <div class="item" v-on:click="navigateTo(menu.targetPath, menu.code)">
+        <a-menu-divider v-bind:key="(menu.code+'-div')" v-if="menu.insertDivider" />
+        <a-menu-item v-bind:key="menu.code" 
+        v-on:click="navigateTo(menu.targetPath, menu.code)">
           {{ menu.title }}
-        </div>
+        </a-menu-item>
       </template>
-    </div>
-  </div>
+    </a-menu>
+    <a-button style="margin-left: 8px">
+      <a-icon type="dash" />
+    </a-button>
+  </a-dropdown>
 </template>
 
 <script lang="ts">
@@ -19,31 +22,28 @@ import { VueRouterHelper } from '../util/VueRouterHelper';
 import { MessageType } from '../stores/messageStore';
 import { message_text } from "../translation/en/message";
 import { word_text } from "../translation/en/word";
-// import { sendMessage } from '../util/ViewCommonFunction';
 import { MenuItem } from '../stores/menuStore';
+import { AuthProvider, AuthProviderImpl } from '@/service/AuthProvider';
+import { MessageService, MessageServiceImpl } from '@/service/MessageService';
 
 export default Vue.extend({
   name: 'SystemMenu',
   data(): ViewStateModel {
-    let menuList: MenuItem[] = [
-      { code: 'about', title: 'About', targetPath: '/about' },
-      { code: 'logout', title: 'Logout', insertDivider: true },
-    ];
     return {
-      menuRoot: menuList,
+      menuRoot: [
+        { code: 'about', title: 'About', targetPath: '/about' },
+        { code: 'logout', title: 'Logout', insertDivider: true },
+      ],
     };
   },
+  computed: {
+    iAuthProvider: ()=>AuthProvider(),
+    iMessageService: ()=>MessageService(),
+  },
   methods: {
-    // sendMessage,
     async navigateTo(targetPath: string, code: string){
-      // let router: VueRouter = this.$router;
       if (code === 'logout') {
-        await this.$store.dispatch('authStore/doLogout');
-        await this.$store.dispatch('messageStore/add', {
-          viewName: word_text['word.login'],
-          type: MessageType.INFO,
-          text: message_text['sentence.login.logoutDone'],
-        });
+        await this.iAuthProvider.logout();
         return;
       }
       VueRouterHelper.navigateToIfNeeded(this.$router, targetPath);
