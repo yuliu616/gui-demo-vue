@@ -18,4 +18,5 @@ export interface MenuItem {
   title: string;
   targetPath?: string;
   insertDivider?: boolean;
+  children?: MenuItem[];
 }

@@ -1,28 +1,35 @@
 <template>
-  <div id="menubar" class="ui menu">
-    <div class="ui dropdown item" 
-      v-for="menuItem in menuRoot" 
-      v-bind:key="menuItem.code"
-      v-on:click="navigateTo(menuItem.targetPath)">
-      {{ menuItem.title }}
-      <div class="ui teal left pointing label" v-if="badgeOfMenu(menuItem.code)">
-        {{ badgeOfMenu(menuItem.code) }}
-      </div>
-      <i class="dropdown icon" v-if="menuItem.children"></i>
-      <div class="menu" v-if="menuItem.children">
-        <a class="item" 
-          v-for="child in menuItem.children" 
+  <a-menu class="menubar" mode="horizontal">
+    <template v-for="menuItem in menuRoot">
+
+      <a-menu-item 
+        v-if="!menuItem.children"
+        v-bind:key="(menuItem.code)"
+        v-on:click="navigateTo(menuItem.targetPath)"
+      >
+        {{ menuItem.title }}
+        <span class="my danger label"
+        v-if="badgeOfMenu(menuItem.code)">
+          {{ badgeOfMenu(menuItem.code) }}
+        </span>
+      </a-menu-item>
+      
+      <a-sub-menu
+      v-if="menuItem.children"
+      :key="(menuItem.code+'-sub')">
+        <span slot="title" class="submenu-title-wrapper">
+          {{ menuItem.title }}
+        </span>
+        <a-menu-item v-for="child in menuItem.children" 
           v-bind:key="child.title"
           v-on:click="navigateTo(child.targetPath)"
-          >
+        >
           {{ child.title }}
-          <div class="ui teal left pointing submenu label" v-if="badgeOfMenu(child.code)">
-            {{ badgeOfMenu(child.code) }}
-          </div>
-        </a>
-      </div>
-    </div>
-  </div>
+        </a-menu-item>
+      </a-sub-menu>
+
+    </template>
+  </a-menu>
 </template>
 
 <script lang="ts">
@@ -63,7 +70,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-#menubar {
+.menubar {
   height: 100%;
 }
 

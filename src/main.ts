@@ -2,7 +2,6 @@ import Vue from 'vue';
 import Antd from 'ant-design-vue';
 
 import App from './App.vue';
-import Sidebar from './Sidebar.vue';
 import Login from './Login.vue';
 import router from './router/router-index';
 import { rootStore } from './stores/index';
@@ -21,12 +20,6 @@ new Vue({
   render: h => h(App),
   store: rootStore,
 }).$mount('#app');
-
-new Vue({
-  router,
-  render: h => h(Sidebar),
-  store: rootStore,
-}).$mount('#sidebar');
 
 new Vue({
   router,

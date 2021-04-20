@@ -9,7 +9,7 @@
         </a-menu-item>
       </template>
     </a-menu>
-    <a-button style="margin-left: 8px">
+    <a-button size="large">
       <a-icon type="dash" />
     </a-button>
   </a-dropdown>

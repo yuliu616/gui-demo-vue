@@ -1,5 +1,17 @@
 <template>
-  <div id="app" v-show="loggedIn" class="ui pusher">
+  <div class="appDiv" v-if="loggedIn">
+
+    <a-drawer class="sidebar-drawer"
+      placement="left"
+      v-bind:body-style="{
+        'padding':0,
+      }"
+      v-on:close="onSidebarDrawerClose"
+      v-bind:closable="false"
+      v-bind:mask-closable="true"
+      v-bind:visible="sidebarVisible">
+      <sidebar></sidebar>
+    </a-drawer>
 
     <div class="banner">
     </div>
@@ -21,7 +33,9 @@
             <breadcrumb />
           </div>
           <div class="toggleSideBarButton">
-            <sidebar-toggle />
+            <a-button class="sidebarToggle-button"
+              v-on:click="toggleSidebar()"
+              icon="appstore" size="large" />
           </div>
           <div class="sysMenu">
             <system-menu />
@@ -60,8 +74,8 @@ import HistoryList from './components/HistoryList.vue';
 import MenuBar from './components/MenuBar.vue';
 import MessageLog from './components/MessageLog.vue';
 import PageFooter from './components/PageFooter.vue';
-import SidebarToggle from './components/SidebarToggle.vue';
 import SystemMenu from './components/SystemMenu.vue';
+import Sidebar from './components/Sidebar.vue';
 import { VueRouterHelper } from './util/VueRouterHelper';
 import { AuthProvider, AuthProviderImpl } from '@/service/AuthProvider';
 
@@ -71,6 +85,7 @@ export default Vue.extend({
       showProdLogo: process.env.VUE_APP_LOGO_USE=='PROD',
       showDevLogo: process.env.VUE_APP_LOGO_USE=='DEV',
       logoBackgroundColor: process.env.VUE_APP_LOGO_BG_COLOR,
+      sidebarVisible: false,
     };
   },
   computed: {
@@ -88,11 +103,17 @@ export default Vue.extend({
     HistoryList,
     PageFooter,
     SystemMenu,
-    SidebarToggle,
+    Sidebar,
   },
   methods: {
     navigateToHome: function(){
       VueRouterHelper.navigateToIfNeeded(this.$router, '/');
+    },
+    toggleSidebar: function(){
+      this.sidebarVisible = !this.sidebarVisible;
+    },
+    onSidebarDrawerClose: function(){
+      this.sidebarVisible = false;
     },
   },
 });
@@ -101,6 +122,7 @@ interface ViewStateModel {
   showProdLogo: boolean;
   showDevLogo: boolean;
   logoBackgroundColor: string;
+  sidebarVisible: boolean;
 }
 </script>
 
@@ -122,6 +144,10 @@ form div.field > div.mx-datepicker {
 </style>
 
 <style scoped>
+
+.sidebar-drawer {
+  padding: 0;
+}
 
 div.banner {
   width: 100%;
@@ -253,7 +279,10 @@ div.messageView {
     width: auto;
   }
   div.mainSection {
-    width: auto;
+    width: calc(100% - 8px);
+    margin: auto;
+    grid-column-start: 1;
+    grid-column-end: 3;
   }
   div.logo {
     min-width: 3.5em;
@@ -275,8 +304,9 @@ div.messageView {
     display: none;
   }
   div.mainSection {
-    height: 100%;
+    width: calc(100% - 8px);
     margin: auto;
+    height: 100%;
   }
 }
 
@@ -287,7 +317,7 @@ div.messageView {
   }
 }
 
-#app {
+div.appDiv {
   width: 100%;
   height: 100%;
 }
