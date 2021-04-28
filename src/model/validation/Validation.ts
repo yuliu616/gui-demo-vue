@@ -14,5 +14,6 @@ export interface FailureExplanation {
 }
 
 export interface ValidationRule {
+  name: string;
   validate: (value: any)=>FailureExplanation|null;
 }
