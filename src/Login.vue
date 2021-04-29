@@ -13,7 +13,7 @@
 
         <a-form-item label="User Name">
           <a-input v-model="username"
-          placeholder="User Name" :auto-focus="true" />
+          placeholder="User Name" auto-focus />
         </a-form-item>
         <a-form-item label="Password">
           <a-input-password v-model="password"

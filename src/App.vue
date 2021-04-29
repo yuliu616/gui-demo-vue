@@ -8,7 +8,7 @@
       }"
       v-on:close="onSidebarDrawerClose"
       v-bind:closable="false"
-      v-bind:mask-closable="true"
+      mask-closable
       v-bind:visible="sidebarVisible">
       <sidebar></sidebar>
     </a-drawer>
