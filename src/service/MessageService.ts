@@ -9,14 +9,21 @@ export class MessageServiceImpl {
 
   public rootStore: Store<any>;
 
+  debug = false;
+
   constructor(rootStore: Store<any> = DEFAULT_ROOT_STORE){
     this.rootStore = rootStore;
+  }
+
+  async init(){
+    this.rootStore.dispatch('messageStore/init');
   }
 
   /**
    * send local message (to messageStore)
    */
   public async sendMessage(message: Message): Promise<void> {
+    if (this.debug) console.log(`msg[${message.type}] view[${message.viewName}] :`, message.text);
     switch (message.type) {
       case MessageType.INFO:
         notification.info({
@@ -62,6 +69,14 @@ export class MessageServiceImpl {
 
 }
 
-export function MessageService(): MessageServiceImpl {
-  return new MessageServiceImpl();
+class Singleton {
+  static value: MessageServiceImpl;
+}
+
+export function MessageService(debug = false) {
+  if (!Singleton.value) {
+    Singleton.value = new MessageServiceImpl();
+  }
+  Singleton.value.debug = debug;
+  return Singleton.value;
 }

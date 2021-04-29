@@ -10,8 +10,8 @@ A web (frontend) built with Vue.js.
 - Vue Router 3.2
 - Vuex 3.6
 - Vue CLI 4.5
-- Semantic UI 2.4
 - Ant Design Vue 1.7
+- Semantic UI 2.4 (css only)
 
 ## Environment (dependency)
 
@@ -33,6 +33,7 @@ A web (frontend) built with Vue.js.
 
 > this project use vue cli based environment config,
 > the config file is defined in `/.env`, `/.env.development`, `/.env.production`.
+> for description and spec of config, refer to `/src/model/GuiConfig.ts`.
 
 ## Debugging
 

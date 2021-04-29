@@ -17,14 +17,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import VueRouter from 'vue-router';
 import { VueRouterHelper } from '../util/VueRouterHelper';
-import { MessageType } from '../stores/messageStore';
-import { message_text } from "../translation/en/message";
-import { word_text } from "../translation/en/word";
 import { MenuItem } from '../stores/menuStore';
-import { AuthProvider, AuthProviderImpl } from '@/service/AuthProvider';
-import { MessageService, MessageServiceImpl } from '@/service/MessageService';
+import { AuthProvider } from '@/service/AuthProvider';
+import { MessageService } from '@/service/MessageService';
 
 export default Vue.extend({
   name: 'SystemMenu',

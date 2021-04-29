@@ -19,8 +19,8 @@ export class AuthServiceImpl {
     return await axios.post(`${this.apiBaseUrl}/login`, options.body).then(res=>res.data);
   }
 
-  async post_refreshToken(options: PostOptions<any>): Promise<AuthRefreshDto>{
-    return await axios.post(`${this.apiBaseUrl}/refreshToken`, options.body).then(res=>res.data);
+  async post_login_refreshToken(options: PostOptions<any>): Promise<AuthRefreshDto>{
+    return await axios.post(`${this.apiBaseUrl}/login/refreshToken`, options.body).then(res=>res.data);
   }
 
 }
@@ -41,6 +41,13 @@ export interface LoginDto {
   password: string;
 } 
 
-export function AuthService(): AuthServiceImpl {
-  return new AuthServiceImpl();
+class Singleton {
+  static value: AuthServiceImpl;
+}
+
+export function AuthService() {
+  if (!Singleton.value) {
+    Singleton.value = new AuthServiceImpl();
+  }
+  return Singleton.value;
 }

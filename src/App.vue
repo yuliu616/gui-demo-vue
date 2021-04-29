@@ -77,21 +77,20 @@ import PageFooter from './components/PageFooter.vue';
 import SystemMenu from './components/SystemMenu.vue';
 import Sidebar from './components/Sidebar.vue';
 import { VueRouterHelper } from './util/VueRouterHelper';
-import { AuthProvider, AuthProviderImpl } from '@/service/AuthProvider';
+import { AuthProvider } from '@/service/AuthProvider';
+import { GuiConfig } from './model/GuiConfig';
 
 export default Vue.extend({
   data(): ViewStateModel {
     return {
-      showProdLogo: process.env.VUE_APP_LOGO_USE=='PROD',
-      showDevLogo: process.env.VUE_APP_LOGO_USE=='DEV',
-      logoBackgroundColor: process.env.VUE_APP_LOGO_BG_COLOR,
       sidebarVisible: false,
     };
   },
   computed: {
-    iAuthProvider(): AuthProviderImpl {
-      return AuthProvider();
-    },
+    iAuthProvider:()=>AuthProvider(),
+    showProdLogo:()=>GuiConfig.useLogo=='PROD',
+    showDevLogo:()=>GuiConfig.useLogo=='DEV',
+    logoBackgroundColor:()=>GuiConfig.logoBgColor,
     loggedIn(): boolean {
       return this.iAuthProvider.isLoggedIn();
     },
@@ -119,9 +118,6 @@ export default Vue.extend({
 });
 
 interface ViewStateModel {
-  showProdLogo: boolean;
-  showDevLogo: boolean;
-  logoBackgroundColor: string;
   sidebarVisible: boolean;
 }
 </script>

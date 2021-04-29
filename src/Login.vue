@@ -37,8 +37,8 @@ import Vue from 'vue';
 import { MessageType } from './stores/messageStore';
 import { message_text } from "./translation/en/message";
 import { word_text } from "./translation/en/word";
-import { MessageService, MessageServiceImpl } from '@/service/MessageService';
-import { AuthProvider, AuthProviderImpl } from '@/service/AuthProvider';
+import { MessageService } from '@/service/MessageService';
+import { AuthProvider } from '@/service/AuthProvider';
 
 export default Vue.extend({
   name: 'Login',
