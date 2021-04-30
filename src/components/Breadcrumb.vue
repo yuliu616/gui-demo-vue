@@ -25,7 +25,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Route } from 'vue-router';
-import { word_text } from '../translation/en/word';
+import { i18n } from '@/translation/i18n';
 
 import { VueRouterHelper } from '../util/VueRouterHelper';
 
@@ -49,7 +49,7 @@ export default Vue.extend({
       if (this.currentLocationNodeList.length > 0) {
         return this.currentLocationNodeList[this.currentLocationNodeList.length-1].name;
       } else {
-        return word_text['word.Home'];
+        return i18n.view['view.Home'];
       }
     }
   },

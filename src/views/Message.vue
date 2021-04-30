@@ -3,8 +3,8 @@
 
     <a-alert type="info" show-icon 
         v-if="selectionModeEnabled"
-        message="Selection Mode" 
-        description="Please select message to be deleted."
+        :message="i18n.message['sentence.selectionMode']"
+        :description="i18n.message['sentence.pleaseSelectMessageToBeDeleted']"
     />
 
     <!-- no record display -->
@@ -19,9 +19,9 @@
       <thead class="full-width">
         <tr>
           <th style="width: 5em;" v-if="selectionModeEnabled"></th>
-          <th style="min-width: 7.2em; width: 10em;">Time</th>
-          <th style="min-width: 7.2em;">Message</th>
-          <th style="min-width: 8em; width: 12em;">View</th>
+          <th style="min-width: 7.2em; width: 10em;">{{ i18n.model.Message['field.time'] }}</th>
+          <th style="min-width: 7.2em;">{{ i18n.model.Message['field.message'] }}</th>
+          <th style="min-width: 8em; width: 12em;">{{ i18n.word['word.view'] }}</th>
         </tr>
       </thead>
 
@@ -46,24 +46,24 @@
             <a-dropdown v-if="!selectionModeEnabled">
               <a-menu slot="overlay">
                 <a-menu-item v-on:click="onClearAllPressed()">
-                  Clear messages
+                  {{ i18n.message['sentence.clearMessage'] }}
                 </a-menu-item>
                 <a-menu-item v-on:click="onSelectMessagePressed()">
-                  Select messages ...
+                  {{ i18n.message['sentence.selectMessage'] }} ...
                 </a-menu-item>
               </a-menu>
               <a-button style="margin-left: 8px">
-                More <a-icon type="down" />
+                {{ i18n.word['word.more'] }} <a-icon type="down" />
               </a-button>
             </a-dropdown>
 
             <div v-if="selectionModeEnabled">
               <a-button-group>
                 <a-button type="danger" v-on:click="onDeleteSelectedPressed()">
-                  Delete those selected
+                  {{ i18n.message['sentence.deleteThoseSelected'] }}
                 </a-button>
                 <a-button v-on:click="onAbortCurrentModePressed()">
-                  Abort
+                  {{ i18n.word['action.abort'] }}
                 </a-button>
               </a-button-group>
             </div>
@@ -107,6 +107,7 @@ import { TableHelper } from '../util/TableHelper';
 import { DateHelper } from '../util/DateHelper';
 import { Message, MessageStoreState } from '../stores/messageStore';
 import { MessageService } from '@/service/MessageService';
+import { i18n } from '@/translation/i18n';
 
 export default Vue.extend({
   name: 'Message',
@@ -123,6 +124,7 @@ export default Vue.extend({
       return this.$store.state.messageStore;
     },
     iMessageService: ()=>MessageService(),
+    i18n:()=>i18n,
     isLastPage(): boolean {
       return this.currentPage>=this.lastPage;
     },

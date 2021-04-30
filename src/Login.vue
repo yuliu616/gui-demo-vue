@@ -11,18 +11,18 @@
       :wrapper-col="{ span: 24 }" 
       @submit.prevent="submittingLoginForm()">
 
-        <a-form-item label="User Name">
+        <a-form-item :label="i18n.model.LoginForm['field.username']">
           <a-input v-model="username"
-          placeholder="User Name" auto-focus />
+          :placeholder="i18n.model.LoginForm['field.username']" auto-focus />
         </a-form-item>
-        <a-form-item label="Password">
+        <a-form-item :label="i18n.model.LoginForm['field.password']">
           <a-input-password v-model="password"
-            placeholder="input password" />
+          :placeholder="i18n.model.LoginForm['field.password']" />
         </a-form-item>
 
         <a-form-item style="margin-top: 1.4em;">
           <a-button type="primary" html-type="submit">
-            Login
+            {{ i18n.word['action.login'] }}
           </a-button>
         </a-form-item>
 
@@ -35,10 +35,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { MessageType } from './stores/messageStore';
-import { message_text } from "./translation/en/message";
-import { word_text } from "./translation/en/word";
 import { MessageService } from '@/service/MessageService';
 import { AuthProvider } from '@/service/AuthProvider';
+import { i18n } from '@/translation/i18n';
 
 export default Vue.extend({
   name: 'Login',
@@ -54,6 +53,7 @@ export default Vue.extend({
   computed: {
     iMessageService: ()=>MessageService(),
     iAuthProvider: ()=>AuthProvider(),
+    i18n: ()=>i18n,
     loggedIn(): boolean {
       return this.iAuthProvider.isLoggedIn();
     },
@@ -74,9 +74,9 @@ export default Vue.extend({
 
       } catch(err){
         await this.iMessageService.sendMessage({
-          viewName: word_text['word.login'],
+          viewName: i18n.view['view.Login'],
           type: MessageType.ERROR,
-          text: message_text['sentence.login.failed'],
+          text: i18n.message['sentence.login.failed'],
         });
         return;
       }

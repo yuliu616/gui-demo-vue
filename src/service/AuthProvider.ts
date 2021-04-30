@@ -4,11 +4,10 @@ import { Message, MessageType } from "@/stores/messageStore";
 import { Store } from "vuex";
 import { AuthService } from "./AuthService";
 import { MessageService } from "./MessageService";
-import { message_text } from "../translation/en/message";
-import { word_text } from "../translation/en/word";
 import { JobScheduler } from "./JobScheduler";
 import moment from "moment";
 import { GuiConfig } from "@/model/GuiConfig";
+import { i18n } from '@/translation/i18n';
 
 const DEFAULT_ROOT_STORE = rootStore;
 const AUTH_TOKEN_REFRESH_FREQ_SEC = GuiConfig.auth.tokenRefreshSec;
@@ -61,9 +60,9 @@ export class AuthProviderImpl {
     this.addTokenRefreshSchedule();
 
     await this.messageService.sendMessage({
-      viewName: word_text['word.login'],
+      viewName: i18n.view['view.Login'],
       type: MessageType.INFO,
-      text: message_text['sentence.login.passed'],
+      text: i18n.message['sentence.login.passed'],
     });
   }
 
@@ -113,9 +112,9 @@ export class AuthProviderImpl {
     if (this.debug) console.log(`logout done.`);
 
     await this.messageService.sendMessage({
-      viewName: word_text['word.login'],
+      viewName: i18n.view['view.Login'],
       type: MessageType.INFO,
-      text: message_text['sentence.login.logoutDone'],
+      text: i18n.message['sentence.login.logoutDone'],
     });
   }
 

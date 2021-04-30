@@ -1,10 +1,11 @@
 import { Store } from 'vuex';
+import { i18n } from '@/translation/i18n';
 
 export const menuStore = {
   namespaced: true,
   state: <MenuStoreState>{
     menuRoot: [
-      { code: 'message', title: 'Messages', targetPath: '/message' },
+      { code: 'message', title: i18n.view['view.Message'], targetPath: '/message' },
     ],
   },
 }

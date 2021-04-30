@@ -7,7 +7,7 @@
     }"
     v-for="it in historyList" :key="it.path"
     v-on:click="onCardClicked(it)">
-      <a-card-meta class="view-name" :title="it.viewName">
+      <a-card-meta class="view-name" :title="i18n.view['view.'+it.viewName]">
       </a-card-meta>
       <span class="my blue label">
         {{ it.cat }}
@@ -24,6 +24,7 @@
 import Vue from 'vue';
 import VueRouter, { Route } from 'vue-router';
 import { VueRouterHelper } from '../util/VueRouterHelper';
+import { i18n } from '@/translation/i18n';
 
 export default Vue.extend({
   name: 'HistoryList',
@@ -35,6 +36,9 @@ export default Vue.extend({
         // {viewName: "Message", cat: "People", path: "/message"},
       ],
     };
+  },
+  computed:{
+    i18n:()=>i18n,
   },
   mounted(){
     this.addCurrentRouteToHistory();

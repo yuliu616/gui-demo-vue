@@ -2,22 +2,26 @@
   <div>
     -----
     <br/><br/>
-    <p>This site is for demo purpose, all content is fake or dummy.</p>
+    <p>{{ i18n.message['sentence.thisSiteIsForDemoPurpose'] }}</p>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { i18n } from '@/translation/i18n';
 
 export default Vue.extend({
   name: 'PageFooter',
   data() {
       return {};
-    },
-    methods: {
-    },
-    components: {
-    },
+  },
+  computed: {
+    i18n: ()=>i18n,
+  },
+  methods: {
+  },
+  components: {
+  },
 });
 </script>
 

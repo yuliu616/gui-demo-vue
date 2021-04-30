@@ -21,14 +21,15 @@ import { VueRouterHelper } from '../util/VueRouterHelper';
 import { MenuItem } from '../stores/menuStore';
 import { AuthProvider } from '@/service/AuthProvider';
 import { MessageService } from '@/service/MessageService';
+import { i18n } from '@/translation/i18n';
 
 export default Vue.extend({
   name: 'SystemMenu',
   data(): ViewStateModel {
     return {
       menuRoot: [
-        { code: 'about', title: 'About', targetPath: '/about' },
-        { code: 'logout', title: 'Logout', insertDivider: true },
+        { code: 'about', title: i18n.view['view.About'], targetPath: '/about' },
+        { code: 'logout', title: i18n.view['view.Logout'], insertDivider: true },
       ],
     };
   },
