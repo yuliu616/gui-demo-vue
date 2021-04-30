@@ -12,6 +12,9 @@
       <span class="my blue label">
         {{ it.cat }}
       </span>
+      <span class="my olive label" v-for="tag in it.tags" :key="tag">
+        {{ tag }}
+      </span>
     </a-card>
 
   </div>
@@ -19,7 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Route } from 'vue-router';
+import VueRouter, { Route } from 'vue-router';
 import { VueRouterHelper } from '../util/VueRouterHelper';
 
 export default Vue.extend({
@@ -49,13 +52,16 @@ export default Vue.extend({
       this.historyList.push(route);
     },
     addCurrentRouteToHistory(){
-      let firstMatchedRoute = this.$router.currentRoute.matched[0];
+      let router: VueRouter = this.$router;
+      let firstMatchedRoute = router.currentRoute.matched[0];
+      let routeParams = router.currentRoute.params;
       let lastMatchedRoute = 
-        this.$router.currentRoute.matched[this.$router.currentRoute.matched.length-1];
+        router.currentRoute.matched[router.currentRoute.matched.length-1];
       let currentRoutePath = VueRouterHelper.getExactPathForRouteWithParams(
-        lastMatchedRoute.path, this.$router.currentRoute.params);
+        lastMatchedRoute.path, router.currentRoute.params);
       this.addToHistoryList({
         viewName: lastMatchedRoute.name || '',
+        tags: routeParams ? Object.values(routeParams) : [],
         cat: firstMatchedRoute.name || '',
         path: currentRoutePath,
       });
@@ -76,6 +82,7 @@ interface ViewStateModel {
 
 interface HistoryItem {
   viewName: string;
+  tags: string[];
   cat: string;
   path: string;
 }
