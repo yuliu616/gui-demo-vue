@@ -30,4 +30,36 @@ export class ObjectHelper {
     return clone;
   }
 
+  /**
+   * traverse all node in the target object and build up a path (dot notation)
+   * @param target 
+   * @param predicateValueIsLeaf predicate function called on all node found 
+   * to determine is it a leaf
+   * @param operationOnLeaf function called on all leaf found
+   * @param pathSoFar path inside the object, using dot notation.
+   */
+  public static traverseObjectGraph(
+    target: any, 
+    predicateValueIsLeaf: (path:string, _:any)=>boolean,
+    operationOnLeaf: (path:string, _:any)=>any,
+    pathSoFar: string|null = null, 
+  ){
+    let keys = Object.keys(target);
+    for (let field of keys) {
+      let nodeValue = target[field];
+      let pathOfNode = (pathSoFar ? pathSoFar + '.' + field : field);
+      if (typeof nodeValue != 'boolean' && !nodeValue) {
+        // skip null/empty value
+        continue;
+      }
+      let isLeaf = predicateValueIsLeaf(pathOfNode, nodeValue);
+      // console.log(`traverseObjectGraph: field=[${field}] isLeaf=${isLeaf}.`);
+      if (isLeaf) {
+        operationOnLeaf(pathOfNode, nodeValue);
+      } else {
+        this.traverseObjectGraph(nodeValue, predicateValueIsLeaf, operationOnLeaf, pathOfNode);
+      }
+    }
+  }
+
 }

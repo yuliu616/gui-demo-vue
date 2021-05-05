@@ -38,4 +38,132 @@ describe('ObjectHelper', function(){
     expect(o1.f2).eq(234);
   });
 
+  it ('traverseObjectGraph could operate on leaf of 1 level object', function(){
+    let sum = 0;
+    ObjectHelper.traverseObjectGraph({
+      first: 1,
+      second: 2,
+      third: 3,
+    }, 
+    (pathSoFar, it)=>{
+      return typeof it == 'number';
+    }, 
+    (pathSoFar, it)=>{
+      sum += it;
+    });
+    expect(sum).eq(6);
+  });
+
+  it ('traverseObjectGraph could map path with leaf for 1 level object', function(){
+    let leafOfPath: any = {};
+    ObjectHelper.traverseObjectGraph({
+      first: 1,
+      second: 2,
+      third: 3,
+    }, 
+    (pathSoFar, it)=>{
+      return typeof it == 'number';
+    }, 
+    (pathSoFar, it)=>{
+      leafOfPath[pathSoFar] = it;
+    });
+    expect(leafOfPath).is.an('object');
+    expect(leafOfPath.first).eq(1);
+    expect(leafOfPath.second).eq(2);
+    expect(leafOfPath.third).eq(3);
+  });
+
+  it ('traverseObjectGraph could operate on leaf of nested object with 2 level', function(){
+    let sum = 0;
+    ObjectHelper.traverseObjectGraph({
+      first: 1,
+      second: {
+        s2a: 101,
+        s2b: 102,
+        s2c: 110,
+        s2d: 150,
+      },
+      third: 3,
+    }, 
+    (pathSoFar, it)=>{
+      return typeof it == 'number';
+    }, 
+    (pathSoFar, it)=>{
+      sum += it;
+    });
+    expect(sum).eq(467);
+  });
+
+  it ('traverseObjectGraph could map path with leaf for nested object with 2 level', function(){
+    let leafOfPath: any = {};
+    ObjectHelper.traverseObjectGraph({
+      first: 1,
+      second: {
+        s2a: 101,
+        s2b: 102,
+        s2c: 110,
+        s2d: 150,
+      },
+      third: 3,
+    }, 
+    (pathSoFar, it)=>{
+      return typeof it == 'number';
+    }, 
+    (pathSoFar, it)=>{
+      leafOfPath[pathSoFar] = it;
+    });
+    expect(leafOfPath).is.an('object');
+    expect(leafOfPath.first).eq(1);
+    expect(leafOfPath).to.not.have.property('second');
+    expect(leafOfPath['second.s2a']).eq(101);
+    expect(leafOfPath['second.s2b']).eq(102);
+    expect(leafOfPath['second.s2c']).eq(110);
+    expect(leafOfPath['second.s2d']).eq(150);
+    expect(leafOfPath.third).eq(3);
+  });
+
+  it ('traverseObjectGraph wont go into null/empty node', function(){
+    let sum = 0;
+    let leafOfPath: any = {};
+    ObjectHelper.traverseObjectGraph({
+      first: 1,
+      second: {
+        s2a: 101,
+        s2b: {
+          bOne: null,
+          bTwo: 2000,
+          bThree: undefined,
+          bFour: 1000,
+          bFive: 3000,
+        },
+        s2c: null,
+        s2d: 150,
+      },
+      third: null,
+      forth: 4,
+    }, 
+    (pathSoFar, it)=>{
+      return typeof it == 'number';
+    }, 
+    (pathSoFar, it)=>{
+      leafOfPath[pathSoFar] = it;
+      sum += it;
+    });
+    expect(leafOfPath).is.an('object');
+    expect(leafOfPath.first).eq(1);
+    expect(leafOfPath).to.not.have.property('second');
+    expect(leafOfPath['second.s2a']).eq(101);
+    expect(leafOfPath).to.not.have.property('second.s2b');
+    expect(leafOfPath).to.not.have.property('second.s2b.bOne');
+    expect(leafOfPath['second.s2b.bTwo']).eq(2000);
+    expect(leafOfPath).to.not.have.property('second.s2b.bThree');
+    expect(leafOfPath['second.s2b.bFour']).eq(1000);
+    expect(leafOfPath['second.s2b.bFive']).eq(3000);
+    expect(leafOfPath).to.not.have.property('second.s2c');
+    expect(leafOfPath['second.s2d']).eq(150);
+    expect(leafOfPath).to.not.have.property('third');
+    expect(leafOfPath.forth).eq(4);
+    expect(sum).eq(6256);
+  });
+
 });
