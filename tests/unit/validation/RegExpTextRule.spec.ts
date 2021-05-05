@@ -2,6 +2,8 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import { RegExpTextRule } from '../../../src/model/validation/RegExpTextRule';
 
+export const ERROR_INVALID_FORMAT = 'ERROR_INVALID_FORMAT';
+
 describe('RegExpTextRule', function(){
 
   it('allow letter-only as decided', function(){
@@ -14,7 +16,7 @@ describe('RegExpTextRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_FORMAT);
     }
   });
 
@@ -28,7 +30,7 @@ describe('RegExpTextRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_FORMAT);
     }
   });
 
@@ -42,7 +44,7 @@ describe('RegExpTextRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_FORMAT);
     }
   });
 
@@ -53,6 +55,17 @@ describe('RegExpTextRule', function(){
     expect(out).to.be.null;
     out = new RegExpTextRule(/^[A-Za-z]+$/).validate(undefined);
     expect(out).to.be.null;
+  });
+
+  it('support customize errorCode', function(){
+    let out = new RegExpTextRule(/^[A-Za-z]+$/, 
+      'name must not contains numbers',
+    ).validate('Peter 123');
+    expect(out).is.an('object');
+    if (out) {
+      expect(out.reason).is.an('string');
+      expect(out.reason).eq('name must not contains numbers');
+    }
   });
 
 });

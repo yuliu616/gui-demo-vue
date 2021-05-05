@@ -2,6 +2,8 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import { MinValueRule } from '../../../src/model/validation/MinValueRule';
 
+export const ERROR_INVALID_VALUE = 'ERROR_INVALID_VALUE';
+
 describe('MinValueRule', function(){
 
   it('works for lower bound', function(){
@@ -14,7 +16,7 @@ describe('MinValueRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
     }
   });
 
@@ -28,7 +30,7 @@ describe('MinValueRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
     }
   });
 
@@ -42,7 +44,7 @@ describe('MinValueRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
     }
   });
 
@@ -67,13 +69,37 @@ describe('MinValueRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
     }
     out = new MinValueRule(100).validate(1/0);
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
+    }
+  });
+
+  it('works for lower bound inclusively', function(){
+    let out = new MinValueRule(100, { exclusive: false }).validate(100);
+    expect(out).to.be.null;
+  });
+
+  it('reject for lower bound inclusively', function(){
+    let out = new MinValueRule(100, { exclusive: true }).validate(100);
+    if (out) {
+      expect(out.reason).is.an('string');
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
+    }
+  });
+
+  it('support customize errorCode', function(){
+    let out = new MinValueRule(100, null,
+      'this number is too small',
+    ).validate(95);
+    expect(out).is.an('object');
+    if (out) {
+      expect(out.reason).is.an('string');
+      expect(out.reason).eq('this number is too small');
     }
   });
 

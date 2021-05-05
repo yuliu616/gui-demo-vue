@@ -13,7 +13,9 @@ export class ValidValueSetRule implements ValidationRule {
 
   name = 'ValidValueSetRule';
 
-  constructor(private allPossibleValues: any[]) {
+  constructor(private allPossibleValues: any[],
+    private errorCode: string = ERROR_INVALID_VALUE,
+  ) {
   }
 
   validate(value: any): FailureExplanation|null {
@@ -23,7 +25,7 @@ export class ValidValueSetRule implements ValidationRule {
     }
     // always reject 'nonsense value'
     if (ValidationUtil.isNonSenseValueForRule(typeof this.allPossibleValues[0], value)) {
-      return { reason: ERROR_INVALID_VALUE };
+      return { reason: this.errorCode };
     }
     
     for (let v of this.allPossibleValues) {
@@ -31,7 +33,7 @@ export class ValidValueSetRule implements ValidationRule {
         return null;
       }
     }
-    return { reason: ERROR_INVALID_VALUE };
+    return { reason: this.errorCode };
   }
 
 }

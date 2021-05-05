@@ -9,7 +9,9 @@ export class RegExpTextRule implements ValidationRule {
 
   name = 'RegExpTextRule';
   
-  constructor(private pattern: RegExp) {
+  constructor(private pattern: RegExp, 
+    private errorCode: string = ERROR_INVALID_FORMAT,
+  ) {
   }
 
   validate(value: any): FailureExplanation|null {
@@ -19,11 +21,11 @@ export class RegExpTextRule implements ValidationRule {
     }
     // always reject 'nonsense value'
     if (ValidationUtil.isNonSenseValueForRule('string', value)) {
-      return { reason: ERROR_INVALID_FORMAT };
+      return { reason: this.errorCode };
     }
 
     if (!this.pattern.test(value)) {
-      return { reason: ERROR_INVALID_FORMAT };
+      return { reason: this.errorCode };
     } else {
       return null;
     }

@@ -2,6 +2,8 @@ import { describe } from 'mocha';
 import { expect } from 'chai';
 import { ValidValueSetRule } from '../../../src/model/validation/ValidValueSetRule';
 
+export const ERROR_INVALID_VALUE = 'ERROR_INVALID_VALUE';
+
 describe('ValidValueSetRule', function(){
 
   it('works for number', function(){
@@ -18,7 +20,7 @@ describe('ValidValueSetRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
     }
   });
 
@@ -36,7 +38,7 @@ describe('ValidValueSetRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
     }
   });
 
@@ -52,7 +54,7 @@ describe('ValidValueSetRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
     }
   });
 
@@ -89,7 +91,7 @@ describe('ValidValueSetRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
     }
     out = new ValidValueSetRule([
       11, 13, 17, 19,
@@ -97,7 +99,19 @@ describe('ValidValueSetRule', function(){
     expect(out).is.an('object');
     if (out) {
       expect(out.reason).is.an('string');
-      expect(out.reason).to.not.be.empty;  
+      expect(out.reason).eq(ERROR_INVALID_VALUE);
+    }
+  });
+
+  it('support customize errorCode', function(){
+    let out = new ValidValueSetRule([
+      'apple', 'orange', 'banana'
+    ], 'i never recognize this is a fruit').validate('pie-apple');
+    expect(out).is.an('object');
+    expect(out).is.an('object');
+    if (out) {
+      expect(out.reason).is.an('string');
+      expect(out.reason).eq('i never recognize this is a fruit');
     }
   });
 

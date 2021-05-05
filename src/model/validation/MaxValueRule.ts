@@ -8,8 +8,13 @@ import { ValidationUtil } from './ValidationUtil';
 export class MaxValueRule implements ValidationRule {
 
   name = 'MaxValueRule';
+  exclusive: boolean;
 
-  constructor(private max: any) {
+  constructor(private max: any,
+    private options: { exclusive: boolean }|null = null,
+    private errorCode: string = ERROR_INVALID_VALUE,
+  ) {
+    this.exclusive = (options && options.exclusive) || false;
   }
 
   validate(value: any): FailureExplanation|null {
@@ -19,11 +24,13 @@ export class MaxValueRule implements ValidationRule {
     }
     // always reject 'nonsense value'
     if (ValidationUtil.isNonSenseValueForRule(typeof this.max, value)) {
-      return { reason: ERROR_INVALID_VALUE };
+      return { reason: this.errorCode };
     }
 
-    if (value !== null && value > this.max) {
-      return { reason: ERROR_INVALID_VALUE };
+    if (value !== null && this.exclusive && value === this.max) {
+      return { reason: this.errorCode };
+    } else if (value !== null && value > this.max) {
+      return { reason: this.errorCode };
     } else {
       return null;
     }
