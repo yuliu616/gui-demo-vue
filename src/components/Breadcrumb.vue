@@ -12,11 +12,13 @@
       v-for="node in nodeListExceptLast">
         <span class="breadcrumb-text"
         v-on:click="navigateTo(node.path)">
-          {{ node.name }}
+          {{ i18n.t('view', 'view.'+node.name) }}
         </span>
       </a-breadcrumb-item>
       <a-breadcrumb-item>
-        <span class="last breadcrumb-text">{{ lastNodeName }}</span>
+        <span class="last breadcrumb-text">
+          {{ i18n.t('view', 'view.'+lastNodeName) }}
+        </span>
       </a-breadcrumb-item>
     </a-breadcrumb>
   </div>
@@ -37,6 +39,7 @@ export default Vue.extend({
     };
   },
   computed: {
+    i18n:()=>i18n,
     nodeListExceptLast(): PathNode[] {
       if (this.currentLocationNodeList.length > 1) {
         return this.currentLocationNodeList.slice(0, 
@@ -49,7 +52,7 @@ export default Vue.extend({
       if (this.currentLocationNodeList.length > 0) {
         return this.currentLocationNodeList[this.currentLocationNodeList.length-1].name;
       } else {
-        return i18n.view['view.Home'];
+        return 'Home';
       }
     }
   },
