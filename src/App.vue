@@ -1,4 +1,5 @@
 <template>
+<a-config-provider :locale="antdLocale">
   <div class="appDiv" v-if="loggedIn">
 
     <a-drawer class="sidebar-drawer"
@@ -64,6 +65,7 @@
     </div>
 
   </div>
+</a-config-provider>
 </template>
 
 <script lang="ts">
@@ -79,6 +81,7 @@ import Sidebar from './components/Sidebar.vue';
 import { VueRouterHelper } from './util/VueRouterHelper';
 import { AuthProvider } from '@/service/AuthProvider';
 import { GuiConfig } from './model/GuiConfig';
+import { getAntdLocale } from '@/model/Locale';
 
 export default Vue.extend({
   data(): ViewStateModel {
@@ -88,6 +91,7 @@ export default Vue.extend({
   },
   computed: {
     iAuthProvider:()=>AuthProvider(),
+    antdLocale:()=>getAntdLocale(GuiConfig.locale),
     showProdLogo:()=>GuiConfig.useLogo=='PROD',
     showDevLogo:()=>GuiConfig.useLogo=='DEV',
     logoBackgroundColor:()=>GuiConfig.logoBgColor,

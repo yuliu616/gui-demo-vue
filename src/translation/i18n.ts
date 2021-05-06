@@ -1,4 +1,5 @@
 import { GuiConfig } from "@/model/GuiConfig";
+import { LocaleCode } from "@/model/Locale";
 import { ObjectHelper } from "@/util/ObjectHelper";
 import { en } from './i18n.en';
 import { zh } from './i18n.zh';
@@ -50,7 +51,7 @@ let base = {
 
 let i18n = Object.assign(base, en);
 
-if (GuiConfig.lang == 'zh') {
+if (GuiConfig.locale == LocaleCode.zh) {
   i18n = Object.assign(base, zh);
 }
 

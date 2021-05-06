@@ -1,3 +1,5 @@
+import { LocaleCode } from "./Locale";
+
 export interface IGuiConfig {
 
   /**
@@ -5,7 +7,7 @@ export interface IGuiConfig {
    */
   environmentName: string;
   
-  lang: string;
+  locale: LocaleCode;
   
   /**
    * which logo to use (for ease of distinguish)
@@ -30,7 +32,7 @@ export interface IGuiConfig {
 export const GuiConfig: IGuiConfig = {
 
   environmentName: process.env.NODE_ENV,
-  lang: 'en',
+  locale: LocaleCode.en,
   logoBgColor: process.env.VUE_APP_LOGO_BG_COLOR,
   useLogo: process.env.VUE_APP_LOGO_USE,
   auth: {

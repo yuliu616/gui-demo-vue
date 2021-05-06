@@ -13,6 +13,9 @@ import 'semantic-ui-css/semantic.min.css';
 import 'ant-design-vue/dist/antd.css';
 import './styles/my-ui-styles.css';
 import { MessageService } from './service/MessageService';
+import moment from 'moment';
+import { getMomentLocaleName } from './model/Locale';
+import { GuiConfig } from './model/GuiConfig';
 
 Vue.config.productionTip = false;
 
@@ -49,6 +52,10 @@ axios.interceptors.request.use(function(req){
 // axios.interceptors.response.use(function(res){
 //   return res;
 // });
+// axios.defaults.timeout = 4500;
+
+// initialize moment
+moment.locale(getMomentLocaleName(GuiConfig.locale));
 
 // bootstrap
 AuthProvider().init();
