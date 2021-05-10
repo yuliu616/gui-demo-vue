@@ -2,6 +2,9 @@ import { rootStore } from "@/stores";
 import { MessageType } from "@/stores/messageStore";
 import { Store } from "vuex";
 import { notification } from 'ant-design-vue';
+import { ERROR_UNKNOWN, RestfulUtil } from "@/util/RestfulUtil";
+import { i18n } from "@/translation/i18n";
+import { StringHelper } from "@/util/StringHelper";
 
 const DEFAULT_ROOT_STORE = rootStore;
 
@@ -59,13 +62,29 @@ export class MessageServiceImpl {
   }
 
   /**
-   * shorthand version of sendMessage(MessageType.ERROR)
+   * sendMessage for error (if errorObject is provided, auto guess error message by it)
+   * (如果有提供 errorObject，以错误码/类自动产生错误讯息)
    */
-  public async errorMsg(viewVm: {viewName: string}, 
+  public async errorMsg(viewVm: {viewName: string, i18nErrorPack?: string}, 
     errorObject: any|null = null,
     message: string,
     options: MessageOptions|null = null,
   ): Promise<void> {
+    let translationPack = viewVm.i18nErrorPack || 'error';
+
+    if (errorObject) {
+      let converted = RestfulUtil.asError(errorObject, {includeTrace:true});
+      if (converted && converted.code && converted.code != ERROR_UNKNOWN) {
+        // if error code exists, display error message by it instead.
+        let messageByCode = i18n.t(translationPack, converted.code);
+        if (converted.messageArguments?.length) {
+          messageByCode = StringHelper.formatString(messageByCode, converted.messageArguments);
+        }
+        errorObject = converted;
+        message = messageByCode;
+      }
+    }
+
     if (errorObject) {
       if (options) {
         options.extra = errorObject;
