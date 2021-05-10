@@ -33,8 +33,8 @@ export class AuthProviderImpl {
   async init(){
     if (this.debug) console.log(`AuthProvider init with refresh interval:${AUTH_TOKEN_REFRESH_FREQ_SEC}s.`);
     await this.rootStore.dispatch('authStore/init');
-    this.startTokenRefreshIfNeeded();
     if (this.authStore.loggedIn) {
+      this.startTokenRefreshIfNeeded();
       // create background job to keep auto refresh token
       this.addTokenRefreshSchedule();
     }
