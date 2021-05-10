@@ -1,6 +1,5 @@
 import { rootStore } from "@/stores";
 import { AuthStoreState } from "@/stores/authStore";
-import { Message, MessageType } from "@/stores/messageStore";
 import { Store } from "vuex";
 import { AuthService } from "./AuthService";
 import { MessageService } from "./MessageService";
@@ -59,11 +58,10 @@ export class AuthProviderImpl {
     // create background job to keep auto refresh token
     this.addTokenRefreshSchedule();
 
-    await this.messageService.sendMessage({
-      viewName: i18n.view['view.Login'],
-      type: MessageType.INFO,
-      text: i18n.message['sentence.login.passed'],
-    });
+    await this.messageService.info(
+      {viewName: i18n.view['view.Login']},
+      i18n.message['sentence.login.passed'],
+    );
   }
 
   async addTokenRefreshSchedule(){
@@ -111,11 +109,10 @@ export class AuthProviderImpl {
     this.jobScheduler.cancelAllJobs();
     if (this.debug) console.log(`logout done.`);
 
-    await this.messageService.sendMessage({
-      viewName: i18n.view['view.Login'],
-      type: MessageType.INFO,
-      text: i18n.message['sentence.login.logoutDone'],
-    });
+    await this.messageService.info(
+      {viewName: i18n.view['view.Login']},
+      i18n.message['sentence.login.logoutDone'],
+    );
   }
 
   isLoggedIn(): boolean {

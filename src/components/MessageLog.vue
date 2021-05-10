@@ -15,8 +15,9 @@
 </template>
 
 <script lang="ts">
+import { Message } from '@/service/MessageService';
 import Vue from 'vue';
-import { Message, MessageStoreState } from '../stores/messageStore';
+import { MessageStoreState } from '../stores/messageStore';
 
 export default Vue.extend({
   name: 'MessageLog',

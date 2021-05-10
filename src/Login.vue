@@ -43,6 +43,7 @@ export default Vue.extend({
   name: 'Login',
   data(): ViewStateModel {
     return {
+      viewName: i18n.view['view.Login'],
       username: '',
       password: '',
       isMorningTime: false,
@@ -73,11 +74,10 @@ export default Vue.extend({
         });
 
       } catch(err){
-        await this.iMessageService.sendMessage({
-          viewName: i18n.view['view.Login'],
-          type: MessageType.ERROR,
-          text: i18n.message['sentence.login.failed'],
-        });
+        // for security reason, dont send error object to messageService
+        await this.iMessageService.errorMsg(this, null,
+          i18n.message['sentence.login.failed'],
+        );
         return;
       }
       // clear fields after login successfully
@@ -90,6 +90,7 @@ export default Vue.extend({
 });
 
 interface ViewStateModel {
+  viewName: string;
   username: string;
   password: string;
   isMorningTime: boolean;
