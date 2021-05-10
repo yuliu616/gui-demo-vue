@@ -1,3 +1,4 @@
+import { Message } from '@/service/MessageService';
 import { Store } from 'vuex';
 
 export const messageStore = {
@@ -9,7 +10,10 @@ export const messageStore = {
   mutations: {
     addMessage(state: MessageStoreState, message: Message){
       if (state.debug) {
-        console.log(`messageStore message[${message.type}]: ${message.text}`);
+        console.log(`messageStore <${message.id}> message[${message.type}]: ${message.text}`);
+        if (message.extra) {
+          console.log(`messageStore <${message.id}> extra:`, message.extra);
+        }
       }
       state.messageList.push(message);
     },
@@ -72,14 +76,6 @@ export interface MessageStoreState {
 interface MessageStoreGetters {
   messageCount: number;
   lastMessage: Message|null;
-}
-
-export interface Message {
-  id?: number;
-  time?: Date;
-  type: MessageType;
-  text: string;
-  viewName: string;
 }
 
 export enum MessageType {

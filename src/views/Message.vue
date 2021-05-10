@@ -105,8 +105,8 @@
 import Vue from 'vue';
 import { TableHelper } from '../util/TableHelper';
 import { DateHelper } from '../util/DateHelper';
-import { Message, MessageStoreState } from '../stores/messageStore';
-import { MessageService } from '@/service/MessageService';
+import { MessageStoreState } from '../stores/messageStore';
+import { Message, MessageService } from '@/service/MessageService';
 import { i18n } from '@/translation/i18n';
 
 export default Vue.extend({
