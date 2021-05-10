@@ -25,12 +25,12 @@ export class AuthServiceImpl {
 
 }
 
-interface AuthToken {
+export interface AuthToken {
   access_token: string;
   token_type: string;
 }
 
-interface AuthRefreshDto {
+export interface AuthRefreshDto {
   access_token: string;
   token_type: string;
   expires_in: number;

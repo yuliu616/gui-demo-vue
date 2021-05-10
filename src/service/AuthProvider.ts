@@ -94,9 +94,21 @@ export class AuthProviderImpl {
   }
 
   async startTokenRefresh() {
-    let tokenRes = await this.authService.post_login_refreshToken({
-      body: {}
-    });
+    let tokenRes;
+    try {
+      tokenRes = await this.authService.post_login_refreshToken({
+        body: {}
+      });
+    } catch (err) {
+      // for security reason, dont send error object to messageService
+      await this.messageService.errorMsg(
+        {viewName: i18n.view['view.Login']}, null, 
+        i18n.error['ERROR_AUTH_REFRESH'],
+      );
+      // if failed to refresh token, auto logout
+      this.logout();
+      return;
+    }
 
     this.rootStore.dispatch('authStore/onTokenRefresh', 
       tokenRes.access_token, 
