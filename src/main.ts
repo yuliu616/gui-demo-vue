@@ -50,6 +50,7 @@ axios.interceptors.request.use(function(req){
 
 // bootstrap
 rootStore.dispatch('preferenceStore/init', { root: true });
+rootStore.dispatch('menuStore/init', { root: true });
 AuthProvider().init();
 MessageService().init();
 

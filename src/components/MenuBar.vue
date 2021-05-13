@@ -1,4 +1,5 @@
 <template>
+<div>
   <a-menu class="menubar" mode="horizontal">
     <template v-for="menuItem in menuRoot">
 
@@ -30,6 +31,7 @@
 
     </template>
   </a-menu>
+</div>
 </template>
 
 <script lang="ts">
@@ -53,10 +55,10 @@ export default Vue.extend({
     },
   },
   methods: {
-    navigateTo: function(targetPath: string){
+    async navigateTo(targetPath: string){
       VueRouterHelper.navigateToIfNeeded(this.$router, targetPath);
     },
-    badgeOfMenu: function(code: string){
+    badgeOfMenu(code: string){
       if (code == 'message') {
         return this.$store.getters['messageStore/messageCount'];
       } else {
