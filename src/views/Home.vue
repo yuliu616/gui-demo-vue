@@ -6,20 +6,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { i18n } from '@/translation/i18n';
+import { i18nModel, PreferenceStoreState } from '@/stores/preferenceStore';
 
 export default Vue.extend({
   name: 'Home',
-  data() {
-    return {
-    };
-  },
   computed: {
-    i18n: ()=>i18n,
-  },
-  methods: {
-  },
-  components: {
+    iPreferenceStore(): PreferenceStoreState {
+      return this.$store.state.preferenceStore;
+    },
+    i18n(): i18nModel {
+      return this.iPreferenceStore.i18n;
+    },
   },
 });
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="w100">
 
     <a-alert type="info" show-icon 
         v-if="selectionModeEnabled"
@@ -13,7 +13,7 @@
       <a-empty />
     </div>
 
-    <table class="ui tablet striped stackable table" 
+    <table class="my ui tablet striped stackable table" 
     v-if="pagedRowList.length > 0">
 
       <thead class="full-width">
@@ -107,7 +107,7 @@ import { TableHelper } from '../util/TableHelper';
 import { DateHelper } from '../util/DateHelper';
 import { MessageStoreState } from '../stores/messageStore';
 import { Message, MessageService } from '@/service/MessageService';
-import { i18n } from '@/translation/i18n';
+import { i18nModel, PreferenceStoreState } from '@/stores/preferenceStore';
 
 export default Vue.extend({
   name: 'Message',
@@ -124,7 +124,12 @@ export default Vue.extend({
       return this.$store.state.messageStore;
     },
     iMessageService: ()=>MessageService(),
-    i18n:()=>i18n,
+    iPreferenceStore(): PreferenceStoreState {
+      return this.$store.state.preferenceStore;
+    },
+    i18n(): i18nModel {
+      return this.iPreferenceStore.i18n;
+    },
     isLastPage(): boolean {
       return this.currentPage>=this.lastPage;
     },

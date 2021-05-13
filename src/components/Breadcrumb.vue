@@ -1,6 +1,6 @@
 <template>
-  <div id="breadcrumb">
-    <a-breadcrumb>
+  <div>
+    <a-breadcrumb class="breadcrumb">
       <span slot="separator">
         <a-icon type="caret-right" class="breadcrumb-separator" />
       </span>
@@ -27,7 +27,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Route } from 'vue-router';
-import { i18n } from '@/translation/i18n';
+import { i18nModel, PreferenceStoreState } from '@/stores/preferenceStore';
 
 import { VueRouterHelper } from '../util/VueRouterHelper';
 
@@ -39,7 +39,12 @@ export default Vue.extend({
     };
   },
   computed: {
-    i18n:()=>i18n,
+    iPreferenceStore(): PreferenceStoreState {
+      return this.$store.state.preferenceStore;
+    },
+    i18n(): i18nModel {
+      return this.iPreferenceStore.i18n;
+    },
     nodeListExceptLast(): PathNode[] {
       if (this.currentLocationNodeList.length > 1) {
         return this.currentLocationNodeList.slice(0, 
@@ -96,22 +101,17 @@ interface PathNode {
 </script>
 
 <style scoped>
-#breadcrumb {
-  display: flex;
-  height: 100%;
-  padding: 8px 8px;
-}
-#breadcrumb > div {
-  align-self: flex-end;
+.breadcrumb {
+  margin: 4px 4px 4px 4px;
 }
 .breadcrumb-home.icon {
-  color: white;
+  color: black;
 }
 .breadcrumb-separator {
-  color: white;
+  color: rgb(31, 31, 31);
 }
 .breadcrumb-text {
-  color: white;
+  color: black;
   cursor: pointer;
 }
 .last.breadcrumb-text {
