@@ -10,9 +10,6 @@ import { AuthProvider } from '@/service/AuthProvider';
 
 import './styles';
 import { MessageService } from './service/MessageService';
-import moment from 'moment';
-import { getMomentLocaleName } from './model/Locale';
-import { GuiConfig } from './model/GuiConfig';
 
 Vue.config.productionTip = false;
 
@@ -51,10 +48,8 @@ axios.interceptors.request.use(function(req){
 // });
 // axios.defaults.timeout = 4500;
 
-// initialize moment
-moment.locale(getMomentLocaleName(GuiConfig.locale));
-
 // bootstrap
+rootStore.dispatch('preferenceStore/init', { root: true });
 AuthProvider().init();
 MessageService().init();
 

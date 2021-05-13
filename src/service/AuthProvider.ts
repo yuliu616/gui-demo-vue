@@ -5,33 +5,37 @@ import { AuthService } from "./AuthService";
 import { MessageService } from "./MessageService";
 import { JobScheduler } from "./JobScheduler";
 import moment from "moment";
-import { GuiConfig } from "@/model/GuiConfig";
-import { i18n } from '@/translation/i18n';
+import { PreferenceStoreState } from "@/stores/preferenceStore";
 
 const DEFAULT_ROOT_STORE = rootStore;
-const AUTH_TOKEN_REFRESH_FREQ_SEC = GuiConfig.auth.tokenRefreshSec;
 const TIME_DIFF_TOLERANCE = 2;
 
 export class AuthProviderImpl {
 
   public rootStore: Store<any>;
   public authStore: AuthStoreState;
+  public preferenceStore: PreferenceStoreState;
+
+  private authTokenRefreshFreqSec: number;
 
   debug = false;
 
   constructor(
     rootStore: Store<any> = DEFAULT_ROOT_STORE,
     authStore: AuthStoreState | null = null,
+    preferenceStore: PreferenceStoreState | null = null,
     protected authService = AuthService(),
     protected messageService = MessageService(),
     protected jobScheduler = JobScheduler(),
   ){
     this.rootStore = rootStore;
     this.authStore = authStore || rootStore.state.authStore;
+    this.preferenceStore = preferenceStore || rootStore.state.preferenceStore;
+    this.authTokenRefreshFreqSec = this.preferenceStore.auth.tokenRefreshSec;
   }
 
   async init(){
-    if (this.debug) console.log(`AuthProvider init with refresh interval:${AUTH_TOKEN_REFRESH_FREQ_SEC}s.`);
+    if (this.debug) console.log(`AuthProvider init with refresh interval:${this.authTokenRefreshFreqSec}s.`);
     await this.rootStore.dispatch('authStore/init');
     if (this.authStore.loggedIn) {
       this.startTokenRefreshIfNeeded();
@@ -59,15 +63,15 @@ export class AuthProviderImpl {
     this.addTokenRefreshSchedule();
 
     await this.messageService.info(
-      {viewName: i18n.view['view.Login']},
-      i18n.message['sentence.login.passed'],
+      {viewName: this.preferenceStore.i18n.view['view.Login']},
+      this.preferenceStore.i18n.message['sentence.login.passed'],
     );
   }
 
   async addTokenRefreshSchedule(){
     this.jobScheduler.registerJob({
       name: 'authTokenRefreshJob',
-      timeoutMs: AUTH_TOKEN_REFRESH_FREQ_SEC * 1000,
+      timeoutMs: this.authTokenRefreshFreqSec * 1000,
       task: ()=>{
         this.startTokenRefresh();
       },
@@ -83,7 +87,7 @@ export class AuthProviderImpl {
     let accessLastFetch = this.authStore.accessLastFetch;
     if (accessLastFetch) {
       let t = moment(accessLastFetch)
-        .add(AUTH_TOKEN_REFRESH_FREQ_SEC + TIME_DIFF_TOLERANCE, 'second');
+        .add(this.authTokenRefreshFreqSec + TIME_DIFF_TOLERANCE, 'second');
       if (moment().isAfter(t)) {
         if (this.debug) console.log(`startTokenRefreshIfNeeded: invoke token refresh immediately`);
         await this.startTokenRefresh();
@@ -102,8 +106,8 @@ export class AuthProviderImpl {
     } catch (err) {
       // for security reason, dont send error object to messageService
       await this.messageService.errorMsg(
-        {viewName: i18n.view['view.Login']}, null, 
-        i18n.error['ERROR_AUTH_REFRESH'],
+        {viewName: this.preferenceStore.i18n.view['view.Login']}, null, 
+        this.preferenceStore.i18n.error['ERROR_AUTH_REFRESH'],
       );
       // if failed to refresh token, auto logout
       this.logout();
@@ -122,8 +126,8 @@ export class AuthProviderImpl {
     if (this.debug) console.log(`logout done.`);
 
     await this.messageService.info(
-      {viewName: i18n.view['view.Login']},
-      i18n.message['sentence.login.logoutDone'],
+      {viewName: this.preferenceStore.i18n.view['view.Login']},
+      this.preferenceStore.i18n.message['sentence.login.logoutDone'],
     );
   }
 

@@ -30,5 +30,6 @@ const word = {
   'word.inactive': 'Inactive',
   'word.disabled': 'Disabled',
   'word.locked': 'Locked',
+  'word.core.systemMenu': 'System',
 };
 export { word };

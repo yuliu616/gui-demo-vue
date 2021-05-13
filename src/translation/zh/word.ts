@@ -30,5 +30,6 @@ const word = {
   'word.inactive': '无效',
   'word.disabled': '无效',
   'word.locked': '锁定',
+  'word.core.systemMenu': '系統',
 };
 export { word };

@@ -1,4 +1,5 @@
 const message = {
+  'sentence.systemName': 'GUI Demo',
   'sentence.login.passed': 'logged in successfully.',
   'sentence.login.failed': 'login failure.',
   'sentence.login.logoutDone': 'logged out.',
@@ -14,6 +15,7 @@ const message = {
   'sentence.selectionMode': 'Selection Mode',
   'sentence.pleaseSelectMessageToBeDeleted': 'Please select message to be deleted.',
   'sentence.helloThisIsADemoApp': 'Hello, this is a demo app, don\'t take it series.',
-  'sentence.thisSiteIsForDemoPurpose': "This site is for demo purpose, all content is fake or dummy."
+  'sentence.thisSiteIsForDemoPurpose': "This site is for demo purpose, all content is fake or dummy.",
+  'sentence.wellIHaveNothingToTellU': "Well, i have nothing more to tell u.",
 };
 export { message };

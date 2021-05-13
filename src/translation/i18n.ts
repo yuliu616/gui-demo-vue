@@ -1,6 +1,4 @@
-import { GuiConfig } from "@/model/GuiConfig";
-import { LocaleCode } from "@/model/Locale";
-import { ObjectHelper } from "@/util/ObjectHelper";
+import { ObjectHelper } from "../util/ObjectHelper";
 import { en } from './i18n.en';
 import { zh } from './i18n.zh';
 
@@ -49,10 +47,16 @@ let base = {
   }
 }
 
-let i18n = Object.assign(base, en);
+let i18nDefaultBundle = Object.assign(base, en);
+type i18nModel = typeof i18nDefaultBundle;
 
-if (GuiConfig.locale == LocaleCode.zh) {
-  i18n = Object.assign(base, zh);
-}
+let i18nBundles: {[_:string]: i18nModel} = {
+  'en': Object.assign({}, base, en),
+  'zh': Object.assign({}, base, zh),
+};
 
-export { i18n };
+export {
+  i18nModel,
+  i18nDefaultBundle,
+  i18nBundles, 
+};

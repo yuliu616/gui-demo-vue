@@ -1,4 +1,5 @@
 const message = {
+  'sentence.systemName': '界面展示',
   'sentence.login.passed': '登陆成功',
   'sentence.login.failed': '登陆失败',
   'sentence.login.logoutDone': '已登出了',
@@ -14,6 +15,7 @@ const message = {
   'sentence.selectionMode': '选择模式',
   'sentence.pleaseSelectMessageToBeDeleted': '请选择要删的讯息.',
   'sentence.helloThisIsADemoApp': '你好，这只是一个展示软件，随意玩玩呗，不要那么认真好吗?',
-  'sentence.thisSiteIsForDemoPurpose': "这是一个功能展示软件, 当中所有东西都是虚假的."
+  'sentence.thisSiteIsForDemoPurpose': "这是一个功能展示软件, 当中所有东西都是虚假的.",
+  'sentence.wellIHaveNothingToTellU': "我没啥想说的.",
 };
 export { message };

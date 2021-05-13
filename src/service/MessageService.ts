@@ -3,8 +3,8 @@ import { MessageType } from "@/stores/messageStore";
 import { Store } from "vuex";
 import { notification } from 'ant-design-vue';
 import { ERROR_UNKNOWN, RestfulUtil } from "@/util/RestfulUtil";
-import { i18n } from "@/translation/i18n";
 import { StringHelper } from "@/util/StringHelper";
+import { i18nModel } from "@/stores/preferenceStore";
 
 const DEFAULT_ROOT_STORE = rootStore;
 
@@ -71,7 +71,8 @@ export class MessageServiceImpl {
     options: MessageOptions|null = null,
   ): Promise<void> {
     let translationPack = viewVm.i18nErrorPack || 'error';
-
+    let i18n: i18nModel = (<any>rootStore.state).preferenceStore.i18n;
+    
     if (errorObject) {
       let converted = RestfulUtil.asError(errorObject, {includeTrace:true});
       if (converted && converted.code && converted.code != ERROR_UNKNOWN) {
