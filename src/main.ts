@@ -8,10 +8,7 @@ import router from './router/router-index';
 import { rootStore } from './stores/index';
 import { AuthProvider } from '@/service/AuthProvider';
 
-import 'semantic-ui-css/semantic.min.css';
-// import 'semantic-ui-css/semantic.js';
-import 'ant-design-vue/dist/antd.css';
-import './styles/my-ui-styles.css';
+import './styles';
 import { MessageService } from './service/MessageService';
 import moment from 'moment';
 import { getMomentLocaleName } from './model/Locale';
