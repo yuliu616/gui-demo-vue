@@ -1,7 +1,7 @@
 import axios from "axios";
 import { PostOptions } from "./HttpServiceCommon";
 
-const DEFAULT_API_BASE_URL = '/api/auth-service/1.0';
+const DEFAULT_API_BASE_URL = '/api/auth-service/1.1';
 
 export class AuthServiceImpl {
 
