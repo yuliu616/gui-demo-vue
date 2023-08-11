@@ -4,6 +4,7 @@ import { view } from './zh/view';
 import { message } from './zh/message';
 import { model } from './zh/model';
 import { bundle as core } from './zh/core/bundle';
+import { bundle as people } from './zh/people/bundle';
 
 export const zh = {
   error,
@@ -12,4 +13,5 @@ export const zh = {
   model,
   view,
   core,
+  people,
 };

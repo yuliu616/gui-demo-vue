@@ -20,6 +20,9 @@ let i18nLookUp: {[_:string]: string[]} = {
   'debugger': [ 'view', 'view.AppDebugger' ],
   'sys': [ 'word', 'word.core.systemMenu' ],
   'logout': [ 'view', 'view.Logout' ],
+  'people': [ 'people.word', 'word.feature.People' ],
+  'people.new': [ 'word', 'action.new' ],
+  'people.list': [ 'view', 'view.People List' ],
 };
 
 export interface MenuStoreState {
@@ -44,6 +47,16 @@ let useMenuStore = defineStore('Menu', {
     menuRoot: [
       { code: 'home', title: '..', targetPath: '/', icon: 'home' },
       { code: 'message', title: '..', targetPath: '/message' },
+      { code: 'people', title: '..', children: [
+        { code: 'people.new', title: '..', targetPath: '/people/creation', icon: 'pen-to-square' },
+        { code: 'people.list', title: '..', targetPath: '/people/list', icon: 'list' },
+        { code: 'divAfter.people.list', isDivider: true, debugUseOnly: true },
+        { code: 'people.33034000003.view', title: 'view 33034000003', targetPath: '/people/item/33034000003/view', debugUseOnly: true },
+        { code: 'people.33034000003.edit', title: 'edit 33034000003', targetPath: '/people/item/33034000003/edit', debugUseOnly: true },
+        { code: 'people.33034000004.view', title: 'view 33034000004', targetPath: '/people/item/33034000004/view', debugUseOnly: true },
+        { code: 'people.33034000005.view', title: 'view 33034000005', targetPath: '/people/item/33034000005/view', debugUseOnly: true },
+        { code: 'people.33034000006.view', title: 'view 33034000006', targetPath: '/people/item/33034000006/view', debugUseOnly: true },
+      ] },
     ],
     sysMenuRoot: {
       code: 'sys', title: '..',

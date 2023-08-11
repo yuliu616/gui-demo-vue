@@ -17,7 +17,8 @@ interface ImportMetaEnv {
   
   /** baseUrl for auth-service (REST api) */
   readonly VITE_AUTH_REST_API_BASE_URL: string;
-  
+  readonly VITE_PEOPLE_REST_API_BASE_URL: string;
+
   // debug flag for views
   readonly VITE_LoginForm_debug: number|string;
   readonly VITE_Footer_debug: number|string;
@@ -32,6 +33,7 @@ interface ImportMetaEnv {
   // debug flag for services
   readonly VITE_MessageService_debug: number|string;
   readonly VITE_AuthService_debug: number|string;
+  readonly VITE_PeopleService_debug: number|string;
       
 }
 
