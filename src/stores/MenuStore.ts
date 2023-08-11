@@ -23,6 +23,10 @@ let i18nLookUp: {[_:string]: string[]} = {
   'people': [ 'people.word', 'word.feature.People' ],
   'people.new': [ 'word', 'action.new' ],
   'people.list': [ 'view', 'view.People List' ],
+  'product': [ 'product.word', 'word.feature.Product' ],
+  'product.new': [ 'word', 'action.new' ],
+  'product.list': [ 'view', 'view.Product List' ],
+  'product.brands': [ 'view', 'view.Brand List' ],
 };
 
 export interface MenuStoreState {
@@ -56,6 +60,17 @@ let useMenuStore = defineStore('Menu', {
         { code: 'people.33034000004.view', title: 'view 33034000004', targetPath: '/people/item/33034000004/view', debugUseOnly: true },
         { code: 'people.33034000005.view', title: 'view 33034000005', targetPath: '/people/item/33034000005/view', debugUseOnly: true },
         { code: 'people.33034000006.view', title: 'view 33034000006', targetPath: '/people/item/33034000006/view', debugUseOnly: true },
+      ] },
+      { code: 'product', title: '..', children: [
+        { code: 'product.new', title: '..', targetPath: '/product/creation', icon: 'pen-to-square' },
+        { code: 'product.list', title: '..', targetPath: '/product/list', icon: 'list' },
+        { code: 'divAfter.product.list', isDivider: true, debugUseOnly: true },
+        { code: 'product.brands', title: '..', targetPath: '/product/brand-list', icon: 'list' },
+        { code: 'divAfter.brands.list', isDivider: true, debugUseOnly: true },
+        { code: 'product.77027.view', title: 'view 77027', targetPath: '/product/item/77027/view', debugUseOnly: true },
+        { code: 'product.77027.edit', title: 'edit 77027', targetPath: '/product/item/77027/edit', debugUseOnly: true },
+        { code: 'product.77028.view', title: 'view 77028', targetPath: '/product/item/77028/view', debugUseOnly: true },
+        { code: 'product.77029.view', title: 'view 77029', targetPath: '/product/item/77029/view', debugUseOnly: true },
       ] },
     ],
     sysMenuRoot: {

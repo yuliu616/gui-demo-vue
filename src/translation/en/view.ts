@@ -10,5 +10,11 @@ const view = {
   'view.People View': 'People View',
   'view.People Editor': 'People Editor',
   'view.Add People': 'Add People',
+  'view.Product': 'Product',
+  'view.Product List': 'Product List',
+  'view.Product View': 'Product View',
+  'view.Product Editor': 'Product Editor',
+  'view.Add Product': 'Add Product',
+  'view.Brand List': 'Brand List',
 };
 export { view };

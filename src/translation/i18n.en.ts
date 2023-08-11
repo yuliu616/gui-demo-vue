@@ -5,6 +5,7 @@ import { message } from './en/message';
 import { model } from './en/model';
 import { bundle as core } from './en/core/bundle';
 import { bundle as people } from './en/people/bundle';
+import { bundle as product } from './en/product/bundle';
 
 export const en = {
   error,
@@ -14,4 +15,5 @@ export const en = {
   view,
   core,
   people,
+  product,
 };

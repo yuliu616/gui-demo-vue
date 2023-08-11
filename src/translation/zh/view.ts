@@ -10,5 +10,11 @@ const view = {
   'view.People View': '查看百姓',
   'view.People Editor': '编辑百姓',
   'view.Add People': '新建百姓',
+  'view.Product': '产品',
+  'view.Product List': '产品列表',
+  'view.Product View': '产品资料',
+  'view.Product Editor': '编辑产品',
+  'view.Add Product': '新建产品',
+  'view.Brand List': '品牌列表',
 };
 export { view };
