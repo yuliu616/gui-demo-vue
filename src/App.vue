@@ -1,193 +1,121 @@
 <template>
-<a-config-provider :locale="antdLocale">
-  <div class="appDiv" v-if="loggedIn">
+  <header v-if="AuthStore.loggedIn">
+    <MenuBar />
+    <MenuStack />
+  </header>
 
-    <a-drawer class="sidebar-drawer"
-      placement="left"
-      v-bind:body-style="{
-        'padding':0,
-      }"
-      v-on:close="onSidebarDrawerClose"
-      v-bind:closable="false"
-      mask-closable
-      v-bind:visible="sidebarVisible">
-      <sidebar></sidebar>
-    </a-drawer>
-
-    <div class="header-pane">
-      <a-button class="sidebar-menu-button" 
-        v-on:click="toggleSidebar()"
-        shape="circle" icon="menu"
-      />
-      <breadcrumb class="breadcrumb" />
-      <menu-bar class="menu-bar" />
-      <a-button class="message-menu-button" 
-        v-on:click="navigateTo('/message')"
-        shape="circle" icon="message"
-      />
-      <system-menu class="sys-menu" />
-
-      <div class="header-logo" v-on:click="navigateToHome()">
-        <div class="header-logo-wrapper"
-        v-bind:style="{ backgroundColor: iPreferenceStore.logoBackgroundColor }">
-          <img class="ui mini image" src="/images/logo.png"
-            v-if="iPreferenceStore.showProdLogo" v-bind:style="{ backgroundColor: iPreferenceStore.logoBackgroundColor }" />
-          <img class="ui mini image" src="/images/logo-dev.png"
-            v-if="iPreferenceStore.showDevLogo" v-bind:style="{ backgroundColor: iPreferenceStore.logoBackgroundColor }" />
-        </div>
-      </div>
+  <a-config-provider :locale="locale">
+    <div :class="{ loggedIn: AuthStore.loggedIn, dark: darkTheme, light: !darkTheme, }"
+      class="view-wrapper"
+    >
+      <RouterView />
     </div>
-
-    <div class="body-pane">
-      <transition name="faded-slide">
-        <router-view class="view-wrapper" />
-      </transition>
-      <page-footer class="page-footer"></page-footer>
-    </div>
-
-  </div>
-</a-config-provider>
+    <PageFooter v-if="AuthStore.loggedIn" />
+  </a-config-provider>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Breadcrumb from './components/Breadcrumb.vue';
-import HistoryList from './components/HistoryList.vue';
+import { RouterLink, RouterView } from 'vue-router';
+import { useAuthStore } from '@/stores/AuthStore';
+import { useMenuStore, type MenuItem } from '@/stores/MenuStore';
+import PageFooter from '@/components/PageFooter.vue';
 import MenuBar from './components/MenuBar.vue';
-import MessageLog from './components/MessageLog.vue';
-import PageFooter from './components/PageFooter.vue';
-import SystemMenu from './components/SystemMenu.vue';
-import Sidebar from './components/Sidebar.vue';
-import { VueRouterHelper } from './util/VueRouterHelper';
-import { AuthProvider } from '@/service/AuthProvider';
-import { getAntdLocale } from '@/model/Locale';
-import { i18nModel, PreferenceStoreState } from './stores/preferenceStore';
+import MenuStack from './components/MenuStack.vue';
+import { NativeDomUtil } from './util/NativeDomUtil';
+import { usePreferenceStore } from '@/stores/PreferenceStore';
+import { LocaleCode } from './model/LocaleCode';
+import en_US from 'ant-design-vue/es/locale/en_US';
+import zh_CN from 'ant-design-vue/es/locale/zh_CN';
+// import ja_JP from 'ant-design-vue/es/locale/ja_JP';
+import { ref } from 'vue';
+import type { ILogger } from './model/core/ILogger';
 
-export default Vue.extend({
-  data(): ViewStateModel {
-    return {
-      sidebarVisible: false,
-    };
+const logger: ILogger = console;
+
+export default {
+  components: {
+    RouterLink,
+    RouterView,
+    MenuBar,
+    MenuStack,
+    PageFooter,
   },
   computed: {
-    iAuthProvider:()=>AuthProvider(),
-    iPreferenceStore(): PreferenceStoreState {
-      return this.$store.state.preferenceStore;
-    },
-    i18n(): i18nModel {
-      return this.iPreferenceStore.i18n;
-    },
-    antdLocale(): any {
-      return getAntdLocale(this.iPreferenceStore.locale);
-    },
-    loggedIn(): boolean {
-      return this.iAuthProvider.isLoggedIn();
-    },
+    PreferenceStore: ()=>usePreferenceStore(),
+    MenuStore: ()=>useMenuStore(),
+    i18n: ()=>usePreferenceStore().i18n,
+    AuthStore: ()=>useAuthStore(),
   },
-  components: {
-    Breadcrumb,
-    MenuBar,
-    MessageLog,
-    HistoryList,
-    PageFooter,
-    SystemMenu,
-    Sidebar,
+  data() {
+    return {
+      darkTheme: ref(false),
+      localeInEffect: usePreferenceStore().locale,
+      locale: en_US, // for Antd
+      // locale: zh_CN, // for Antd
+      // locale: ja_JP, // for Antd
+    };
+  },
+  created() {
+    this.setPageTitle();
+  },
+  mounted() {
+    this.darkTheme = this.PreferenceStore.darkTheme;
+    this.onThemeChange();
+    this.PreferenceStore.$subscribe((mutation, state)=>{
+      if (state.darkTheme !== this.darkTheme) {
+        this.darkTheme = state.darkTheme;
+        this.onThemeChange();
+      }
+      if (state.locale !== this.localeInEffect) {
+        this.localeInEffect = state.locale;
+        this.onLocaleChange(state.locale);
+      }
+    });
+    this.PreferenceStore.$subscribe((mutation, state)=>{
+      if (this.MenuStore.locale != state.locale) {
+        this.MenuStore.setTranslationBundle(state.locale, state.i18n);
+      }
+    });
+
+    if (!this.AuthStore.loggedIn) {
+      this.$router.push('/login');
+    }
   },
   methods: {
-    navigateToHome(){
-      VueRouterHelper.navigateToIfNeeded(this.$router, '/');
+    setPageTitle(){
+      NativeDomUtil.changePageTitle(this.i18n.message['sentence.systemName']);
     },
-    async navigateTo(targetPath: string){
-      VueRouterHelper.navigateToIfNeeded(this.$router, targetPath);
+    onThemeChange() {
+      // logger?.log('theme changed', this.darkTheme);
+      NativeDomUtil.changeBodyForeBackColor(
+        this.PreferenceStore.colorPalette.fgColor,
+        this.PreferenceStore.colorPalette.bgColor,
+      );
     },
-    toggleSidebar(){
-      this.sidebarVisible = !this.sidebarVisible;
-    },
-    onSidebarDrawerClose(){
-      this.sidebarVisible = false;
-    },
+    onLocaleChange(locale: LocaleCode) {
+      // logger?.log('locale changed', this.localeForTitle);
+      this.setPageTitle();
+      if (locale == LocaleCode.en) {
+        this.locale = en_US;
+      } else if (locale == LocaleCode.zh) {
+        this.locale = zh_CN;
+      } else {
+        logger?.warn('unrecognized locale for Antd:', locale);
+        this.locale = en_US;
+      }
+    }
   },
-});
-
-interface ViewStateModel {
-  sidebarVisible: boolean;
-}
+};
 </script>
 
 <style scoped>
-/*** layout styles ***/
-/* div.appDiv {} */
-div.header-pane {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  padding: 0 5px 2px 5px;
-  background-color: white;
+div.view-wrapper.loggedIn {
+  padding: 2em;
+  width: 100%;
+  height: fit-content;
 }
-div.body-pane {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 3px;
-}
-div.body-pane > div {
-  max-width: 1200px;
-  overflow: hidden;
-}
-/* .page-footer {} */
-
-/*** component styles ***/
-.breadcrumb {
-  display: inline-block;
-}
-.menu-bar {
-  display: inline-block;
-  flex-grow: 1; 
-  align-self: stretch;
-}
-.message-menu-button {
-  display: block;
-}
-.sys-menu {
-  display: block;
-}
-.header-logo {
-  display: none;
-  margin: 2px;
-  padding: 2px;
-}
-.header-logo-wrapper {
-  display: inline-block;
-  padding: 4px;
-  border-radius: 16px;
-}
-.sidebar-menu-button {
-  display: none;
-}
-/* .view-wrapper {} */
-
-
-/*** responsive overriding ***/
-@media screen and (max-width: 1024px) {
-  div.header-pane {
-    flex-direction: row-reverse;
-    background-color: silver;
-  }
-  .breadcrumb {
-    display: none;
-  }
-  .menu-bar {
-    display: none;
-  }
-  .sys-menu {
-    display: none;
-  }
-  .header-logo {
-    display: block;
-    flex-grow: 1;
-  }
-  .sidebar-menu-button {
-    display: block;
-  }
+div.view-wrapper {
+  width: 100%;
+  height: 100%;
 }
 </style>

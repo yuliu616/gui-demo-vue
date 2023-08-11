@@ -1,6 +1,5 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
-import { RegExpTextRule } from '../../../src/model/validation/RegExpTextRule';
+import { describe, it, expect } from '../testingFramework';
+import { RegExpTextRule } from '../../src/model/validation/RegExpTextRule';
 
 export const ERROR_INVALID_FORMAT = 'ERROR_INVALID_FORMAT';
 
@@ -65,6 +64,39 @@ describe('RegExpTextRule', function(){
     if (out) {
       expect(out.reason).is.an('string');
       expect(out.reason).eq('name must not contains numbers');
+    }
+  });
+
+  it('allow letters for mixing letter(and digit) and Chinese as decided', function(){
+    // for letters, digits, safe symbols and Chinese
+    let out = new RegExpTextRule(/^[0-9A-Za-z#\/\-\s\p{Script=Han}]+$/u).validate('iphone');
+    expect(out).to.be.null;
+  });
+
+  it('allow Chinese for mixing letter(and digit) and Chinese as decided', function(){
+    // for letters, digits, safe symbols and Chinese
+    let out = new RegExpTextRule(/^[0-9A-Za-z#\/\-\s\p{Script=Han}]+$/u).validate('小米');
+    expect(out).to.be.null;
+  });
+
+  it('allow mixing letters and Chinese for mixing letter(and digit) and Chinese as decided', function(){
+    // for letters, digits, safe symbols and Chinese
+    let out = new RegExpTextRule(/^[0-9A-Za-z#\/\-\s\p{Script=Han}]+$/u).validate('小米 X2');
+    expect(out).to.be.null;
+  });
+
+  it('allow safe symbols and Chinese for mixing letter(and digit) and Chinese as decided', function(){
+    // for letters, digits, safe symbols and Chinese
+    let out = new RegExpTextRule(/^[0-9A-Za-z#\/\-\s\p{Script=Han}]+$/u).validate('Good #2/R-X');
+    expect(out).to.be.null;
+  });
+
+  it('could reject by letter(and digit) and Chinese only as decided', function(){
+    let out = new RegExpTextRule(/^[0-9A-Za-z#\/\-\s\p{Script=Han}]+$/u).validate('iPhone $123');
+    expect(out).is.an('object');
+    if (out) {
+      expect(out.reason).is.an('string');
+      expect(out.reason).eq(ERROR_INVALID_FORMAT);
     }
   });
 

@@ -5,15 +5,15 @@
 export interface RestfulError {
 
   /**
-   * HTTP status
+   * HTTP status (if code exists, statusCode will not be provided)
    */
-  statusCode: number;
+  statusCode?: number;
 
   /**
    * request abort due to timeout
    * 是否因时限而客户端放弃请求
    */
-  isTimeout: boolean;
+  isTimeout?: boolean;
 
   /**
    * app depended result/error code

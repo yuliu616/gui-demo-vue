@@ -1,4 +1,4 @@
-import { ValidationRule } from "./validation/Validation";
+import { type ValidationRule } from "./validation/Validation";
 
 export interface ModelDef {
   fields: {[_:string]: FieldDef};

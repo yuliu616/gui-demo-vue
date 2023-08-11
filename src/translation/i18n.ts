@@ -1,6 +1,9 @@
-import { ObjectHelper } from "../util/ObjectHelper";
+import type { ILogger } from "@/model/core/ILogger";
+import { ObjectUtil } from "../util/ObjectUtil";
 import { en } from './i18n.en';
 import { zh } from './i18n.zh';
+
+const logger: ILogger = console;
 
 let base = {
 
@@ -15,9 +18,9 @@ let base = {
    */
   t: function(pack: string, value: string): string {
     if (!this.pathToBundle) {
-      // console.log('initialize pathToBundle');
+      // logger?.log('initialize pathToBundle');
       let leafOfPath: {[_:string]: any} = {};
-      ObjectHelper.traverseObjectGraph(this, 
+      ObjectUtil.traverseObjectGraph(this, 
       (pathSoFar, it)=>{
         // leaf = i18n bundle (key/value pair for translation)
         if (typeof it == 'object'){
@@ -34,7 +37,7 @@ let base = {
         leafOfPath[pathSoFar] = it;
       });
       this.pathToBundle = leafOfPath;
-      // console.log('this.pathToBundle =', this.pathToBundle);
+      // logger?.log('this.pathToBundle =', this.pathToBundle);
     }
 
     let targetPack: any = this.pathToBundle[pack];
@@ -56,7 +59,7 @@ let i18nBundles: {[_:string]: i18nModel} = {
 };
 
 export {
-  i18nModel,
+  type i18nModel,
   i18nDefaultBundle,
   i18nBundles, 
 };

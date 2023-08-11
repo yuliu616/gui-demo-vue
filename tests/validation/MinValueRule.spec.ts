@@ -1,6 +1,5 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
-import { MinValueRule } from '../../../src/model/validation/MinValueRule';
+import { describe, it, expect } from '../testingFramework';
+import { MinValueRule } from '../../src/model/validation/MinValueRule';
 
 export const ERROR_INVALID_VALUE = 'ERROR_INVALID_VALUE';
 

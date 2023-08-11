@@ -1,6 +1,5 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
-import { MaxValueRule } from '../../../src/model/validation/MaxValueRule';
+import { describe, it, expect } from '../testingFramework';
+import { MaxValueRule } from '../../src/model/validation/MaxValueRule';
 
 export const ERROR_INVALID_VALUE = 'ERROR_INVALID_VALUE';
 

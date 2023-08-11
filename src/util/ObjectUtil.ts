@@ -1,17 +1,58 @@
-export class ObjectHelper {
+import type { ILogger } from "@/model/core/ILogger";
 
+const logger: ILogger = console;
+
+export class ObjectUtil {
 
   /**
    * with the provided object (key/value pairs),
    * create a clone of it with all value replaced 
    * with a default value.
    */
-  public static cloneWithValueReset(target: {[_:string]: any}, fieldDefault: any){
-    let clone: any = {};
+  public static cloneWithValueReset(
+    target: {[_:string]: any}, fieldDefault: any,
+  ): {[_:string]: any} {
+    let clone: {[_:string]: any} = {};
     for (let key in target) {
       clone[key] = fieldDefault;
     }
     return clone;
+  }
+
+  /**
+   * for the provided array (list of objects),
+   * pick the target 'field' from each item,
+   * merge them into one object, with key = value of the field,
+   * value with the provided data.
+   */
+  public static reduceAsPropertyBag<T>(
+    array: {[_:string]: any}[], field: string, value: T,
+  ): {[_:string]: T} {
+    let bag: {[_:string]: any} = {};
+    for (let it of array) {
+      let key = it[field];
+      bag[key] = value;
+    }
+    return bag;
+  }
+
+  /**
+   * for all keys of a PropertyBag,
+   * if the value of it pass the provided 'predicate',
+   * collect it.
+   * @returns array of keys that matches.
+   */
+  public static getKeyListOfPropertyBag<T>(
+    bag: {[_:string]: T}, predicate: (_:T)=>boolean,
+  ): string[] {
+    let matches: string[] = [];
+    for (let key in bag) {
+      let value: T = bag[key];
+      if (predicate(value)) {
+        matches.push(key);
+      }
+    }
+    return matches;
   }
 
   /**
@@ -53,13 +94,24 @@ export class ObjectHelper {
         continue;
       }
       let isLeaf = predicateValueIsLeaf(pathOfNode, nodeValue);
-      // console.log(`traverseObjectGraph: field=[${field}] isLeaf=${isLeaf}.`);
+      // logger?.log(`traverseObjectGraph: field=[${field}] isLeaf=${isLeaf}.`);
       if (isLeaf) {
         operationOnLeaf(pathOfNode, nodeValue);
       } else {
         this.traverseObjectGraph(nodeValue, predicateValueIsLeaf, operationOnLeaf, pathOfNode);
       }
     }
+  }
+
+  public static allFields(obj: any): string[] {
+    let fields: string[] = [];
+    for (let f of Object.keys(obj)) {
+      if (typeof obj[f] != 'function' &&
+      typeof obj[f] != 'symbol') {
+        fields.push(f);
+      }
+    }
+    return fields;
   }
 
 }

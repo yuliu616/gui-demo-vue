@@ -18,4 +18,4 @@ HEALTHCHECK --interval=10s --timeout=5s \
   CMD curl -f http://127.0.0.1:${PORT}/index.html || exit 1
 
 # build with this:
-# > docker build -t gui-web-vue:1.0.1 .
+# > docker build -t gui-web-vue:1.2.0 .

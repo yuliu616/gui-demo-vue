@@ -1,7 +1,7 @@
 import { 
   ERROR_INVALID_VALUE, 
-  FailureExplanation,
-  ValidationRule
+  type FailureExplanation,
+  type ValidationRule
 } from './Validation';
 import { ValidationUtil } from './ValidationUtil';
 

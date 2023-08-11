@@ -1,6 +1,5 @@
-import { describe } from 'mocha';
-import { expect } from 'chai';
-import { ValidValueSetRule } from '../../../src/model/validation/ValidValueSetRule';
+import { describe, it, expect } from '../testingFramework';
+import { ValidValueSetRule } from '../../src/model/validation/ValidValueSetRule';
 
 export const ERROR_INVALID_VALUE = 'ERROR_INVALID_VALUE';
 

@@ -1,57 +1,47 @@
-import Vue from 'vue';
+import './assets/main.css';
+import 'ant-design-vue/dist/antd.min.css';
+
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
 import Antd from 'ant-design-vue';
-import axios from "axios";
+import { useFontAwesome } from './fontAwesomeSetup';
+import { usePreferenceStore } from './stores/PreferenceStore';
+import { LocaleCode } from './model/LocaleCode';
+import { useAxios } from './axiosSetup';
+import dayjs from 'dayjs';
 
 import App from './App.vue';
-import Login from './Login.vue';
-import router from './router/router-index';
-import { rootStore } from './stores/index';
-import { AuthProvider } from '@/service/AuthProvider';
+import router from './router'; // import router related codes.
 
-import './styles';
-import { MessageService } from './service/MessageService';
+// localize dayjs
+import 'dayjs/locale/en'; // en_US
+import 'dayjs/locale/zh-cn';
+import { useAuthStore } from './stores/AuthStore';
+import { useMessageStore } from './stores/MessageStore';
+import { useMenuStore } from './stores/MenuStore';
+import { AuthProvider } from './service/AuthProvider';
+// import 'dayjs/locale/ja';
+dayjs.locale('en'); // en_US
+// dayjs.locale('zh-cn');
+// dayjs.locale('ja');
 
-Vue.config.productionTip = false;
+const app = createApp(App);
 
-Vue.use(Antd);
+// enable plugins: router, state management(pinia).
+app.use(createPinia());
+app.use(router);
+app.use(Antd);
+useFontAwesome(app);
+useAxios(app);
 
-new Vue({
-  router,
-  render: h => h(App),
-  store: rootStore,
-}).$mount('#app');
+// init for stores (if any)
+useAuthStore().init();
+useMessageStore().init();
+usePreferenceStore().init();
+useMenuStore().init();
 
-new Vue({
-  router,
-  render: h => h(Login),
-  store: rootStore,
-}).$mount('#login');
+if (useAuthStore().loggedIn) {
+  AuthProvider().startTokenRefreshRepeatedJob();
+}
 
-// set up axios
-axios.interceptors.request.use(function(req){
-  // auto add access token for all api call except auth-service
-  // > login call:   /api/auth-service/1.0/login
-  // > refresh call: /api/auth-service/1.0/login/refreshToken
-  if (req.url) {
-    if (!req.url.startsWith('/api/auth-service') ||
-      req.url.match('^/api/auth-service/.*/login/refreshToken$')
-    ) {
-      // console.log('interceptors: req.url =', req.url);
-      let access_token = (<any>rootStore.state).authStore.access_token;
-      req.headers['authorization']=`Bearer ${access_token}`;  
-    }  
-  }
-  return req;
-});
-// axios.interceptors.response.use(function(res){
-//   return res;
-// });
-// axios.defaults.timeout = 4500;
-
-// bootstrap
-rootStore.dispatch('preferenceStore/init', { root: true });
-rootStore.dispatch('menuStore/init', { root: true });
-AuthProvider().init();
-MessageService().init();
-
-console.log(`vue app started using NODE_ENV=${process.env.NODE_ENV}`);
+app.mount('#app');

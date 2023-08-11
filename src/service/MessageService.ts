@@ -1,25 +1,40 @@
-import { rootStore } from "@/stores";
-import { MessageType } from "@/stores/messageStore";
-import { Store } from "vuex";
-import { notification } from 'ant-design-vue';
-import { ERROR_UNKNOWN, RestfulUtil } from "@/util/RestfulUtil";
-import { StringHelper } from "@/util/StringHelper";
-import { i18nModel } from "@/stores/preferenceStore";
+import { message, notification } from 'ant-design-vue';
+import { StringUtil } from "@/util/StringUtil";
+import type { ILogger } from '@/model/core/ILogger';
+import { MessageType, type Message } from '@/model/core/Message';
+import type { i18nModel } from '@/translation/i18n';
+import { usePreferenceStore } from '@/stores/PreferenceStore';
+import { ERROR_UNKNOWN, RestfulUtil } from '@/util/RestfulUtil';
+import { useMessageStore } from '@/stores/MessageStore';
 
-const DEFAULT_ROOT_STORE = rootStore;
+const NOTIFICATION_DURATION_SEC = 3;
+// const NOTIFICATION_DURATION_SEC = null; // forever
+
+export interface MessageOptions {
+  /**
+   * extra data to be kept with the message.
+   * (normally, not displayed)
+   */
+  extra: any;
+}
 
 export class MessageServiceImpl {
 
-  public rootStore: Store<any>;
-
   debug = false;
+  logger?: ILogger;
 
-  constructor(rootStore: Store<any> = DEFAULT_ROOT_STORE){
-    this.rootStore = rootStore;
-  }
+  private preferenceStore = usePreferenceStore();
+  private messageStore = useMessageStore();
 
-  async init(){
-    this.rootStore.dispatch('messageStore/init');
+  constructor(options?: {
+      debug?: boolean,
+      logger?: ILogger,
+    },
+  ) {
+    this.debug = options?.debug || false;
+    this.logger = options?.logger;
+
+    if (this.debug) this.logger?.log(`MessageService created.`);
   }
 
   /**
@@ -31,7 +46,7 @@ export class MessageServiceImpl {
     this.sendMessage({
       viewName: viewVm.viewName,
       type: MessageType.GOOD,
-      text: message
+      message: message
     }, options);
   }
 
@@ -44,7 +59,7 @@ export class MessageServiceImpl {
     this.sendMessage({
       viewName: viewVm.viewName,
       type: MessageType.INFO,
-      text: message
+      message: message
     }, options);
   }
 
@@ -57,7 +72,7 @@ export class MessageServiceImpl {
     this.sendMessage({
       viewName: viewVm.viewName,
       type: MessageType.WARN,
-      text: message
+      message: message
     }, options);
   }
 
@@ -70,16 +85,18 @@ export class MessageServiceImpl {
     message: string,
     options: MessageOptions|null = null,
   ): Promise<void> {
-    let translationPack = viewVm.i18nErrorPack || 'error';
-    let i18n: i18nModel = (<any>rootStore.state).preferenceStore.i18n;
+    let i18n: i18nModel = this.preferenceStore.i18n;
     
     if (errorObject) {
       let converted = RestfulUtil.asError(errorObject, {includeTrace:true});
-      if (converted && converted.code && converted.code != ERROR_UNKNOWN) {
+      if (converted?.code && converted.code != ERROR_UNKNOWN) {
         // if error code exists, display error message by it instead.
+        // for generic error, use core error pack (instead of view depended pack)
+        let translationPack = (converted?.statusCode ? 'error' : viewVm.i18nErrorPack || 'error');
+        if (this.debug) this.logger?.log('converted =', converted);
         let messageByCode = i18n.t(translationPack, converted.code);
         if (converted.messageArguments?.length) {
-          messageByCode = StringHelper.formatString(messageByCode, converted.messageArguments);
+          messageByCode = StringUtil.formatString(messageByCode, converted.messageArguments);
         }
         errorObject = converted;
         message = messageByCode;
@@ -87,18 +104,16 @@ export class MessageServiceImpl {
     }
 
     if (errorObject) {
-      if (options) {
-        options.extra = errorObject;
-      } else {
-        options = {
-          extra: errorObject,
-        };
+      if (!options) {
+        options = <MessageOptions>{};
       }
+      options.extra = errorObject;
     }
+
     this.sendMessage({
       viewName: viewVm.viewName,
       type: MessageType.ERROR,
-      text: message
+      message: message
     }, options);
   }
 
@@ -108,79 +123,76 @@ export class MessageServiceImpl {
   public async sendMessage(message: Message,
     options: MessageOptions|null = null,
   ): Promise<void> {
-    if (this.debug) console.log(`msg[${message.type}] view[${message.viewName}] :`, message.text);
+    if (this.debug) this.logger?.log(
+      `msg[${message.type}] view[${message.viewName}] :`, message.message);
+    
     switch (message.type) {
       case MessageType.INFO:
         notification.info({
+          class: (this.preferenceStore.darkTheme ? 'my my-antd-notification-dark':undefined),
           message: message.viewName,
-          description: message.text,
+          description: message.message,
+          duration: NOTIFICATION_DURATION_SEC,
         });    
         break;
       case MessageType.WARN:
         notification.warn({
+          class: (this.preferenceStore.darkTheme ? 'my my-antd-notification-dark':undefined),
           message: message.viewName,
-          description: message.text,
+          description: message.message,
+          duration: NOTIFICATION_DURATION_SEC,
         });    
         break;
       case MessageType.ERROR:
         notification.error({
+          class: (this.preferenceStore.darkTheme ? 'my my-antd-notification-dark':undefined),
           message: message.viewName,
-          description: message.text,
+          description: message.message,
+          duration: NOTIFICATION_DURATION_SEC,
         });    
         break;
       case MessageType.GOOD:
         notification.success({
+          class: (this.preferenceStore.darkTheme ? 'my my-antd-notification-dark':undefined),
           message: message.viewName,
-          description: message.text,
+          description: message.message,
+          duration: NOTIFICATION_DURATION_SEC,
         });    
         break;
       default:
-        console.warn(`MessageType not handled:[${message.type}]`);
+        this.logger?.warn(`MessageType not handled:[${message.type}]`);
     }
-    await this.rootStore.dispatch('messageStore/add', {
+    
+    await this.messageStore.addMessage({
       viewName: message.viewName,
       type: message.type,
-      text: message.text,
+      message: message.message,
       extra: message.extra || options?.extra,
     });
   }
 
-  public async removeMessageByIdList(messageIdList: number[]): Promise<void> {
-    await this.rootStore.dispatch('messageStore/removeList', messageIdList);
-  }
-
-  public async clearMessage(): Promise<void> {
-    await this.rootStore.dispatch('messageStore/removeAll');
+  public async getMessage(offset: number, limit: number){
+    return this.messageStore.messageList.slice(offset, offset+limit);
   }
 
 }
-
-export interface Message {
-  id?: number;
-  time?: Date;
-  type: MessageType;
-  text: string;
-  viewName: string;
-  extra?: any;
-}
-
-export interface MessageOptions {
-  /**
-   * extra data to be kept with the message.
-   * (normally, not displayed)
-   */
-  extra: any;
-}
-
 
 class Singleton {
   static value: MessageServiceImpl;
 }
 
-export function MessageService(debug = false) {
+/**
+ * providing feedback/message to user (in GUI)
+ */
+export function MessageService() {
   if (!Singleton.value) {
-    Singleton.value = new MessageServiceImpl();
+    let debug: boolean = !!(+import.meta.env.VITE_MessageService_debug);
+    Singleton.value = new MessageServiceImpl(
+      {
+        logger: console,
+        debug: debug,
+      }
+    );
   }
-  Singleton.value.debug = debug;
   return Singleton.value;
 }

@@ -17,3 +17,5 @@ export interface ValidationRule {
   name: string;
   validate: (value: any)=>FailureExplanation|null;
 }
+
+export type FieldErrorState = '' | 'warning' | 'error';
