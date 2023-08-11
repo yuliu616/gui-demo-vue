@@ -2,16 +2,15 @@
 
 > code name: `gui-web-vue`.
 
-A web (frontend) built with Vue.js.
+A web (frontend) built with Vue.js(v3).
 
 ## Framework used
 
-- Vue.js 2.6
-- Vue Router 3.2
-- Vuex 3.6
-- Vue CLI 4.5
-- Ant Design Vue 1.7
-- Semantic UI 2.4 (css only)
+- Vue.js 3.3
+- Vue Router 4.2
+- Pinia 2.1
+- Ant Design Vue 3.2
+- Font Awesome for Vue (icon set) 3.0
 
 ## Environment (dependency)
 
@@ -27,41 +26,46 @@ A web (frontend) built with Vue.js.
 
 ## Development Setup
 
-- npm
+- npm (node.js v18)
 
 ## Configuration
 
 > this project use vue cli based environment config,
 > the config file is defined in `/.env`, `/.env.development`, `/.env.production`.
-> for description and spec of config, refer to `/src/model/GuiConfig.ts`.
+> for description and spec of config, refer to `env.d.ts`.
 
 ## Debugging
 
 ```
-# debug web will be served at: http://127.0.0.1:8080/
+# debug web will be served at: http://localhost:5173/
 npm start
 ```
 
 ## Testing
 
-- mocha test
+- vitest (Mocha style)
 ```
-npm run test:unit
+npm test
 ```
 
 ## Building
 
-```
+```sh
+# build to output folder `dist`
 npm run build
 ```
 
-## Running (production)
+## Running (production mode)
 
-project is compiled as static files, served by html server.
+- after building, serve by this:
 
-## Entry points
+```sh
+npm run preview
+```
 
-- http://127.0.0.1:8080/
+- Entry points
+
+> http://localhost:4173/
 
 # Docker support
 
@@ -70,5 +74,5 @@ project is compiled as static files, served by html server.
 - after building the app (npm), run this:
 
 ```sh
-docker build -t gui-web-vue:1.0 .
+docker build -t gui-web-vue:1.2 .
 ```

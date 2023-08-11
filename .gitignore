@@ -16,6 +16,9 @@ out
 target
 /dist
 
-# misc
+# logs
 npm-debug.log
 log
+
+#vue3 files
+.env.local
